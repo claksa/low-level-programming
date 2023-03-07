@@ -3,4 +3,4 @@ project(llp)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(llp main.cpp)
+add_executable(llp main.cpp main.h)
