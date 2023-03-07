@@ -14,10 +14,18 @@ using namespace std;
 
 using node_type = variant<int32_t, float, string, bool>;
 
+struct make_string_functor {
+    std::string operator()(const std::string &x) const { return x; }
+    std::string operator()(::int32_t x) const { return to_string(x); }
+    std::string operator()(float x) const { return to_string(x); }
+    std::string operator()(bool x) const { return to_string(x); }
+};
+
 class Node {
 public:
     bool leaf = false; // leaf == "child" or just node without children
     node_type value;
+    string node_id;
 //    vector<Node*> children;
 //    Node* parent;
 };
@@ -45,13 +53,6 @@ DataTypes getEnumDataType(string &type) {
     }
 }
 
-//struct schema {
-//    string node_name;
-//    data_types val;
-//    schema* next;
-//};
-
-
 unordered_map<string, vector<string>> pr_constraints; // node_name=id --> node's properties (children)
 unordered_map<string, DataTypes> type_constraints;
 
@@ -67,7 +68,7 @@ bool is_schema(string &schema_name) {
         return false;
     }
 
-    // TODO иметь в виду что так-то свойства _необязательны_
+    // иметь в виду что так-то свойств может и не быть
     if (pr_constraints.count(schema_name) == 1) {
         cout << "properties constraints for " << schema_name << " are existed" << endl;
     } else {
@@ -147,6 +148,7 @@ void create_element(struct element_query *query) {
         }
     } else node.leaf = true;
     node.value = query->val;
+    node.node_id = query->node_name;
     database.push_back(node);
 }
 
@@ -182,11 +184,19 @@ void test() {
     q1.val = "my_book";
 
     sch2.scheme_name = "author";
-    q1.node_name = sch2.scheme_name;
+    q2.node_name = sch2.scheme_name;
     q2.val = "priest";
+    q2.parent_name = sch1.scheme_name;
 
     sch3.scheme_name = "bookname";
+    q3.node_name = sch3.scheme_name;
+    q3.val = "shapolang";
+    q3.parent_name = sch1.scheme_name;
+
     sch4.scheme_name = "edition";
+    q4.node_name = sch4.scheme_name;
+    q4.val = 5;
+    q4.parent_name = sch4.scheme_name;
 
     sch1.scheme_type = STRING_T;
     sch2.scheme_type = STRING_T;
@@ -208,6 +218,16 @@ void test() {
         cout << "key: " << p.first << ", value: ";
         print_vector(p.second);
         cout << endl;
+    }
+
+    create_element(&q1);
+    create_element(&q2);
+    create_element(&q3);
+    create_element(&q4);
+
+    for (auto node: database) {
+        cout << "node " << node.node_id << endl;
+        cout << "value [" << visit(make_string_functor(), node.value) << "]\n";
     }
 
 }
