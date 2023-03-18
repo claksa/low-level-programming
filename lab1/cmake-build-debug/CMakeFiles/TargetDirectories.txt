@@ -1,0 +1,3 @@
+C:/Users/DELL/fall3_labs/low-level-programming/lab1/cmake-build-debug/CMakeFiles/llp.dir
+C:/Users/DELL/fall3_labs/low-level-programming/lab1/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/DELL/fall3_labs/low-level-programming/lab1/cmake-build-debug/CMakeFiles/rebuild_cache.dir
