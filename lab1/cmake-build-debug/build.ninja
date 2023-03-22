@@ -67,6 +67,12 @@ build CMakeFiles/llp.dir/element.cpp.obj: CXX_COMPILER__llp_Debug C$:/Users/DELL
   OBJECT_DIR = CMakeFiles\llp.dir
   OBJECT_FILE_DIR = CMakeFiles\llp.dir
 
+build CMakeFiles/llp.dir/type.cpp.obj: CXX_COMPILER__llp_Debug C$:/Users/DELL/fall3_labs/low-level-programming/lab1/type.cpp || cmake_object_order_depends_target_llp
+  DEP_FILE = CMakeFiles\llp.dir\type.cpp.obj.d
+  FLAGS = -g -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\llp.dir
+  OBJECT_FILE_DIR = CMakeFiles\llp.dir
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target llp
@@ -75,7 +81,7 @@ build CMakeFiles/llp.dir/element.cpp.obj: CXX_COMPILER__llp_Debug C$:/Users/DELL
 #############################################
 # Link the executable llp.exe
 
-build llp.exe: CXX_EXECUTABLE_LINKER__llp_Debug CMakeFiles/llp.dir/scheme_query.cpp.obj CMakeFiles/llp.dir/main.cpp.obj CMakeFiles/llp.dir/element.cpp.obj
+build llp.exe: CXX_EXECUTABLE_LINKER__llp_Debug CMakeFiles/llp.dir/scheme_query.cpp.obj CMakeFiles/llp.dir/main.cpp.obj CMakeFiles/llp.dir/element.cpp.obj CMakeFiles/llp.dir/type.cpp.obj
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\llp.dir

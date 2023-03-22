@@ -6,35 +6,25 @@
 #include <vector>
 #include <unordered_map>
 #include <iostream>
+#include <map>
 #include "element.h"
-
-using namespace std;
 
 void test();
 
+using namespace std;
 
-static unordered_map<string, DataTypes> const str_ent = {
-        {"int32", DataTypes::INT32_T},
-        {"float", DataTypes::FLOAT_T},
-        {"string", DataTypes::STRING_T},
-        {"bool", DataTypes::BOOL_T}};
-
-
-struct node_scheme {
-    string el;
-    DataTypes el_type;
-};
-
-// book: name string, author string, edition int32 -- save in db
 class scheme_query {
     int collection_id;
-    vector<node_scheme> properties;
+    map<string , DataTypes> props;
 public:
     scheme_query() = default;
-    scheme_query(int col, vector<node_scheme> props);
+    explicit scheme_query(int id);
 
-    int getCollectionId() const;
+    [[nodiscard]] int getCollectionId() const;
+    [[nodiscard]] const map<string, DataTypes> &getProps() const;
+
     void setCollectionId(int collectionId);
+    void add_property(const string& key, DataTypes value);
 
     friend ostream& operator<<(ostream& os, const scheme_query& dt);
     friend ostream& write(ostream& out, scheme_query& scheme);
