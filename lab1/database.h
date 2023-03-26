@@ -88,7 +88,7 @@ public:
         cout << "pointer after write collection: " << filestream.tellp() << endl;
     }
 
-    void read_collection_header(fstream &file, long collection_id) {
+    static void read_collection_header(fstream &file, long collection_id) {
         long offset = DB_OFFSET + collection_id*col_docs_size;
         cout << "offset before reading: " << offset << endl;
         cout << "read collection with id=" << collection_id << endl;
