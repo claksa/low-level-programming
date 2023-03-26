@@ -7,11 +7,6 @@
 #include "scheme.h"
 #include "region.h"
 
-#include "meta_db_info.h"
-#include "region.h"
-
-#define DB_OFFSET sizeof(database_info)
-
 
 class database_info {
 public:
@@ -51,7 +46,7 @@ public:
     }
 
     friend ostream& operator<<(ostream& os, const database& db) {
-        cout << "---METAINF---" << endl;
+        cout << "---META_INF---" << endl;
         cout << "database name (filename): " << db.meta.name << endl;
         cout << "maximum number of collections: " << db.meta.num_cols << endl;
         cout << "maximum number of documents in each collection: " << db.meta.num_docs << endl;
@@ -93,7 +88,7 @@ public:
         cout << "pointer after write collection: " << filestream.tellp() << endl;
     }
 
-    void read_collection(fstream &file, long collection_id) {
+    void read_collection_header(fstream &file, long collection_id) {
         long offset = DB_OFFSET + collection_id*col_docs_size;
         cout << "offset before reading: " << offset << endl;
         cout << "read collection with id=" << collection_id << endl;

@@ -49,18 +49,18 @@ public:
     collection(const collection_meta_info &header, const scheme &scheme) :
             header(header), sch(scheme) {}
 
-    collection(): sch({}), header({}) {}
+    collection(): sch({}, ""), header({}) {}
 
 
 public:
     friend ostream& write(ostream& out, collection& col) {
-        out.write((char*)&col.header, sizeof(col.header));
+        out.write(reinterpret_cast<char*>(&col.header), sizeof(col.header));
         col.sch.write_scheme_info(out);
         return out;
     }
 
     friend istream& read(istream& in, collection& col) {
-        in.read((char*)&col.header, sizeof(col.header));
+        in.read(reinterpret_cast<char*>(&col.header), sizeof(col.header));
         col.sch.read_scheme_info(in);
         return in;
     }

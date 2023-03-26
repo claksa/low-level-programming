@@ -1,9 +1,0 @@
-#ifndef LLP_META_DB_INFO_H
-#define LLP_META_DB_INFO_H
-
-#define DATABASE "database.dat"
-#define DEFAULT_COL_NUM 100
-#define DEFAULT_DOCS_NUM 1000
-#define FILE_SIZE 10737418240
-
-#endif //LLP_META_DB_INFO_H

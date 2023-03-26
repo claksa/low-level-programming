@@ -3,11 +3,12 @@
 
 
 #include <string>
+#include <utility>
 #include <vector>
 #include <unordered_map>
 #include <iostream>
 #include <map>
-#include "element.h"
+#include "document.h"
 
 
 using namespace std;
@@ -20,14 +21,16 @@ struct property_field {
 
 class scheme {
 public:
+    string collection_name;
     int property_nums;
-    property_field* field = nullptr; // or just (?) vector
+    property_field* field;
 
 
-    explicit scheme(int property_nums) : property_nums(property_nums)
-    {
-        field = new property_field[property_nums];
-    }
+    explicit scheme(int property_nums, string name) :
+    property_nums(property_nums),
+    collection_name(std::move(name)),
+    field(new property_field[property_nums])
+    {}
 
      ~scheme() {
 //        delete []field;
@@ -35,12 +38,12 @@ public:
 
     friend ostream& write(ostream& out, scheme& sch) {
         cout << "property scheme size: " << sizeof(sch) << endl;
-        out.write((char*)&sch, sizeof(sch));
+        out.write(reinterpret_cast<char*>(&sch), sizeof(sch));
         return out;
     }
 
     friend istream& read(istream& in, scheme& sch) {
-        in.read((char*)&sch, sizeof(sch));
+        in.read(reinterpret_cast<char*>(&sch), sizeof(sch));
         return in;
     }
 

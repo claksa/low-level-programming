@@ -2,12 +2,19 @@
 #define LLP_REGION_H
 
 #include <cstring>
-#include "element.h"
 #include "collection.h"
-#include "meta_db_info.h"
+#include "document.h"
 
-#define NODE_INFO_SIZE sizeof(element)*DEFAULT_DOCS_NUM
-#define NODE_TREE_INFO_SIZE sizeof(node_info)
+#define FILE_SIZE 10737418240
+
+#define DATABASE "database.dat"
+#define DEFAULT_COL_NUM 100
+#define DEFAULT_DOCS_NUM 1000
+#define DB_OFFSET sizeof(database_info)
+
+
+#define NODE_INFO_SIZE sizeof(property)*DEFAULT_DOCS_NUM
+#define NODE_TREE_INFO_SIZE sizeof(doc_tree_info)
 #define COLLECTION_HEADER_SIZE sizeof(collection)
 
 
