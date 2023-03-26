@@ -16,12 +16,13 @@ struct node_scheme {
     DataTypes type;
 };
 
+static int el_id = 0;
+
 class node_info {
     int collection_id;
     int id;
     int parent_id;
     int properties;
-    inline static int el_id = 0;
 
 public:
     node_info(int collection_id, int parent_id);
@@ -32,10 +33,6 @@ public:
 
     friend ostream& write(ostream& out, node_info& inf);
     friend istream& read(istream& in, node_info& inf);
-};
-
-struct document {
-
 };
 
 class element {
