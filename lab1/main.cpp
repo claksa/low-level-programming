@@ -15,8 +15,14 @@ int main() {
     auto* col1 = new collection(sch);
     db.create_collection(filestream, *col);
     db.create_collection(filestream, *col1);
-    db.read_collection_header(filestream, col->header.collection_id);
-    db.read_collection_header(filestream, col1->header.collection_id);
+    auto* tmp_col = new collection();
+    tmp_col->header.collection_id = col1->header.collection_id;
+    db.read_collection_header(filestream, *tmp_col);
+    db.delete_collection(filestream, col1->header.collection_id);
+    auto* col3 = new collection(sch);
+    db.create_collection(filestream, *col3);
+    tmp_col->header.collection_id = col3->header.collection_id;
+    db.read_collection_header(filestream, *tmp_col);
     database::close(filestream);
     return 0;
 }

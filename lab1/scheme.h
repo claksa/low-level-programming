@@ -9,6 +9,7 @@
 #include <iostream>
 #include <map>
 #include "document.h"
+#include "type.h"
 
 
 using namespace std;
@@ -28,29 +29,31 @@ public:
 
     explicit scheme(int property_nums, string name) :
     property_nums(property_nums),
-    collection_name(std::move(name)),
-    field(new property_field[property_nums])
-    {}
+    collection_name(std::move(name))
+    {
+        field = new property_field[property_nums];
+    }
 
      ~scheme() {
 //        delete []field;
     }
 
     friend ostream& write(ostream& out, scheme& sch) {
-        cout << "property scheme size: " << sizeof(sch) << endl;
-        out.write(reinterpret_cast<char*>(&sch), sizeof(sch));
+        out.write((char*)&sch, sizeof(sch));
         return out;
     }
 
     friend istream& read(istream& in, scheme& sch) {
-        in.read(reinterpret_cast<char*>(&sch), sizeof(sch));
+        in.read((char*)&sch, sizeof(sch));
         return in;
     }
 
     friend ostream& operator<<(ostream& os, const scheme& sch) {
+        cout << "collection name: " << sch.collection_name << endl;
         for (int i = 0; i < sch.property_nums; i++) {
             cout << "property name: "<< sch.field[i].property_name << endl;
-            cout << "type: " << sch.field[i].data_type << endl;
+            auto type = static_cast<DataTypes>(sch.field[i].data_type);
+            cout << "type: " << ent_str.at(type) << endl;
         }
         return os;
     }

@@ -56,6 +56,18 @@ public:
         return SUCCESS;
     }
 
+    static long get_collection_header_offset() {
+        return sizeof(col_buf);
+    }
+
+    static long get_doc_tree_offset() {
+        return sizeof(doc_tree_buf);
+    }
+
+    static long get_docs_offset() {
+        return sizeof(doc_buf);
+    }
+
 };
 
 
