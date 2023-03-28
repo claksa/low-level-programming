@@ -12,17 +12,27 @@ int main() {
 
 
     auto* col = new collection(sch);
-    auto* col1 = new collection(sch);
     db.create_collection(filestream, *col);
-    db.create_collection(filestream, *col1);
-    auto* tmp_col = new collection();
-    tmp_col->header.collection_id = col1->header.collection_id;
-    db.read_collection_header(filestream, *tmp_col);
-    db.delete_collection(filestream, col1->header.collection_id);
-    auto* col3 = new collection(sch);
-    db.create_collection(filestream, *col3);
-    tmp_col->header.collection_id = col3->header.collection_id;
-    db.read_collection_header(filestream, *tmp_col);
+    node_type val1 = "priest";
+    node_type val2 = "shapolang";
+    node_type val3 = "Liu Yao";
+    node_type types[2] = {val1, val2};
+    node_type types1[2] = {val1, val3};
+    add_node_query query = {.collection_id = col->header.collection_id,
+                            .node_name = "my_book",
+                            .properties = types1,
+                            .parent_id = -1,
+                            .children_size = 0,
+                            .children = {}};
+    db.create_node(filestream, &query);
+    add_node_query query1 = {.collection_id = col->header.collection_id,
+                             .node_name = "book2",
+                             .properties = types,
+                             .parent_id = -1,
+                             .children_size = 0,
+                             .children = {}};
+    db.create_node(filestream, &query1);
+    db.read_all_nodes(filestream, col->header.collection_id);
     database::close(filestream);
     return 0;
 }

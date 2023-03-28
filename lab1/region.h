@@ -27,15 +27,9 @@ enum ALLOC_RES {
 class region {
 
 public:
-    char* col_buf;
-    char* doc_buf;
-    char* doc_tree_buf;
-
-    region() :
-    col_buf(new char[COLLECTION_HEADER_SIZE]),
-    doc_buf(new char[NODE_INFO_SIZE]),
-    doc_tree_buf(new char[NODE_TREE_INFO_SIZE])
-    {}
+    char col_buf[COLLECTION_HEADER_SIZE];
+    char doc_buf[NODE_INFO_SIZE];
+    char doc_tree_buf[NODE_TREE_INFO_SIZE];
 
 
     // TODO RES HANDLING
@@ -45,15 +39,15 @@ public:
         file.seekp(offset, ios_base::beg);
         ::memset(col_buf, 0, sizeof(col_buf));
         file.write(col_buf, sizeof(col_buf));
-        delete[] col_buf;
+//        delete col_buf;
         return SUCCESS;
     }
 
     ALLOC_RES allocate_doc_region(ostream &file, long offset) {
         file.seekp(offset, ios::beg);
-        ::memset(doc_buf, 0, sizeof(*doc_buf));
+        ::memset(doc_buf, 0, sizeof(doc_buf));
         file.write(doc_buf, sizeof(doc_buf));
-        delete[] doc_buf;
+//        delete[] doc_buf;
         return SUCCESS;
     }
 
@@ -61,7 +55,7 @@ public:
         file.seekp(offset, ios::beg);
         ::memset(doc_tree_buf, 0, sizeof(*doc_tree_buf));
         file.write(doc_tree_buf, sizeof(doc_tree_buf));
-        delete[] doc_tree_buf;
+//        delete[] doc_tree_buf;
         return SUCCESS;
     }
 

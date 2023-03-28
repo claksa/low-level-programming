@@ -6,7 +6,7 @@
 #include <utility>
 #include "scheme.h"
 #include "region.h"
-#include "type.h"
+#include "query.h"
 
 // TODO errors handling!
 // TODO чекать что не ушли за "пределы" документа
@@ -120,7 +120,7 @@ public:
        } else cout << "not found as removed collection " << endl;
         long offset = existed_collections.at(id);
         col.read_collection(file, offset);
-        cout << "---" << endl;
+        cout << "read collection header: " << endl;
         cout << col;
     }
 
@@ -138,25 +138,57 @@ public:
         } else cout << "ERROR: can't delete collection, it's not empty" << endl;
     }
 
-    void create_node(fstream& file, long collection_id) {
+    void create_node(fstream& file, add_node_query* query) {
         auto* col = new collection();
-        col->header.collection_id = collection_id;
+        col->header.collection_id = query->collection_id;
+        cout << "IN CREATE NODE: " << endl;
         read_collection_header(file, *col);
+        col->header.is_empty = false;
+
         property_field* field = col->sch.field;
-        auto* property1 = new property(field[0].property_name, "priest", static_cast<DataTypes>(field[0].data_type));
-        auto* property2 = new property(field[1].property_name, "shapolang", static_cast<DataTypes>(field[1].data_type));
+        auto* property1 = new property(field[0].property_name,
+                                       query->properties[0],
+                                       static_cast<DataTypes>(field[0].data_type));
+        auto* property2 = new property(field[1].property_name,
+                                       query->properties[1],
+                                       static_cast<DataTypes>(field[1].data_type));
 
         // пока так,хз что делать с свойствами ещё (так чтобы добавлял именно объект коллекции!)
         long property_offset = col->header.end_of_last_property;
         property1->add_property(file, property_offset);
         col->header.end_of_last_property = property2->add_property(file, property_offset + (long)sizeof(property));
-
-        auto* node = new doc_tree_info(-1,
-                                       col->sch.collection_name,
+        cout << "pointer after write properties(end_of_last_property): " << col->header.end_of_last_property << endl;
+        auto* node = new doc_tree_info(query->parent_id,
+                                       query->node_name,
                                        property_offset,
-                                       (long)file.tellp(),
-                                       {});
+                                       query->children_size,
+                                       2);
         col->header.end_of_last_node = col->insert_node(file, *node);
+        cout << "pointer after write node info(end_of_last_node): " << col->header.end_of_last_node << endl;
+        // update header
+        col->write_collection(file);
+    }
+
+    void read_all_nodes(fstream& file, long collection_id) {
+        auto* col = new collection();
+        col->header.collection_id = collection_id;
+        cout << "IN READ ALL: " << endl;
+        read_collection_header(file, *col);
+        if (col->header.is_empty) {
+            cout << "no documents in collection " << endl;
+            return;
+        }
+        col->read_node_tree(file);
+    }
+
+    void remove_node(fstream& file, remove_node_query& query) {
+        auto* col = new collection();
+        col->header.collection_id = query.collection_id;
+        read_collection_header(file, *col);
+        if (col->header.is_empty) {
+            cout << "no documents in collection " << endl;
+            return;
+        }
     }
 
 };

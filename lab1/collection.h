@@ -44,15 +44,13 @@ public:
     }
 };
 
+
+
 class collection {
 public:
     //size_t cur_num_docs; // dynamically  changed -- пока опционально, не сохраняю
     collection_meta_info header;
     scheme sch;
-    // name <--> offset_from_region_beg
-    map<string, long> existed_docs;
-    map<string, long> deleted_docs;
-
     explicit collection(const scheme& sch) : sch(sch), header({}){}
 
     collection(const collection_meta_info &header, const scheme &scheme) :
@@ -97,24 +95,34 @@ public:
     }
 
     long insert_node(fstream& file, doc_tree_info& node) {
-        long node_tree_start = header.end_documents;
+        long node_tree_start = header.end_of_last_node;
         node.add_node(file, node_tree_start);
-        existed_docs.emplace(node.node_name, node_tree_start);
         return (long) file.tellp();
     }
 
-    void remove_node(fstream& file, string& node_name) {
-        long offset = existed_docs.at(node_name);
-        //read node если у ноды есть дети, то не удаляем
-        //deallocate
-        // remove from existed documents
-        // add to deleted documents
-    }
+    //!!!NOT TREE TRAVERSION
+    void read_node_tree(fstream& file) const {
+        cout << "READ NODE_TREE: " << endl;
+        long offset = header.end_documents; // and start node tree info
+        file.seekp(offset, ios_base::beg);
+        while ((long)file.tellp() != header.end_of_last_node)  {
+            auto* node = new doc_tree_info();
+            node->read_node(file, offset);
+            cout << *node;
+            cout << "---" << endl;
 
-    void update_node(fstream& file, string& node_name) {
-        //////aaaaaaaa
-    }
+            long start_property = node->start_content_offset;
+            for (int i = 0; i < node->real_properties_size; i++) {
+                auto* p = new property();
+                p->read_property(file,(long) (start_property + i*sizeof(property)));
+                cout << *p;
+            }
 
+            cout << endl;
+            offset = offset + (long) sizeof(doc_tree_info);
+            file.seekp(offset, ios_base::beg);
+        }
+    }
 
 };
 

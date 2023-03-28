@@ -13,19 +13,29 @@ class doc_tree_info {
     int parent_id;
     static inline int id;
 public:
-    long* children;
+    int children_n;
+    int real_properties_size;
+    long* children{};
     string node_name;
     int node_id;
     long start_content_offset;
-    long end_content_offset;
 
-    doc_tree_info(int parent_id, string name, long start_prop, long end_prop, long* children) :
+    doc_tree_info() :
+    node_id(-1),
+    parent_id(-2),
+    node_name(""),
+    start_content_offset(0),
+    real_properties_size(0)
+    {}
+
+    doc_tree_info(int parent_id, string name, long start_prop, int children_n, int p_num) :
     node_id(id++),
     parent_id(parent_id),
     node_name(std::move(name)),
     start_content_offset(start_prop),
-    end_content_offset(end_prop),
-    children(children)
+    children_n(children_n),
+    children(new long[children_n]),
+    real_properties_size(p_num)
     {}
 
     friend ostream& write(ostream& out, doc_tree_info& node) {
@@ -44,13 +54,18 @@ public:
     }
 
     void read_node(fstream& filestream, long offset) {
-        filestream.seekg(offset, ios_base::beg);
+//        filestream.seekg(offset, ios_base::beg);
         read(filestream, *this);
     }
 
     friend ostream& operator<<(ostream& os, const doc_tree_info& node) {
         cout << "node_id: " << node.node_id << endl;
+        cout << "node_name: " << node.node_name << endl;
         cout << "parent_id: " << node.parent_id << endl;
+        for (int i = 0; i < node.children_n; i++) {
+            cout << "children id: " << node.children[i] << endl;
+        }
+        return os;
     }
 };
 
@@ -58,6 +73,10 @@ class property {
     string property_name;
     node_type val;
 public:
+    property():
+    property_name(""),
+    val(0)
+    {}
     property(string name, node_type value, DataTypes type) {
         property_name = std::move(name);
         if (is_valid_type(value, type)) {
