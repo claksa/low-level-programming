@@ -29,22 +29,21 @@ public:
 
     explicit scheme(int property_nums, string name) :
     property_nums(property_nums),
-    collection_name(std::move(name))
-    {
-        field = new property_field[property_nums];
-    }
+    collection_name(std::move(name)),
+    field(new property_field[property_nums])
+    {}
 
      ~scheme() {
 //        delete []field;
     }
 
     friend ostream& write(ostream& out, scheme& sch) {
-        out.write((char*)&sch, sizeof(sch));
+        out.write(reinterpret_cast<char*>(&sch), sizeof(sch));
         return out;
     }
 
     friend istream& read(istream& in, scheme& sch) {
-        in.read((char*)&sch, sizeof(sch));
+        in.read(reinterpret_cast<char*>(&sch), sizeof(sch));
         return in;
     }
 

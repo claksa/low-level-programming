@@ -8,15 +8,17 @@
 using namespace std;
 
 class collection_meta_info {
+public:
     long start_documents;
     long end_documents; // also start of tree model records
     long end_tree_model_recs;
-public:
     bool is_empty;
     long collection_id;
-    //int property_nums; // perhaps it will be removed
     long offset_from_beg;
     static inline long current_id;
+
+    long end_of_last_property;
+    long end_of_last_node;
 
     collection_meta_info() = default;
 
@@ -26,8 +28,9 @@ public:
             start_documents(start_docs),
             end_documents(end_docs),
             end_tree_model_recs(end_coll),
-            is_empty(true)
-//            property_nums(p_nums)
+            is_empty(true),
+            end_of_last_property(start_docs),
+            end_of_last_node(end_docs)
     {}
 
     friend ostream& operator<<(ostream& os, const collection_meta_info& meta_inf) {
@@ -46,6 +49,9 @@ public:
     //size_t cur_num_docs; // dynamically  changed -- пока опционально, не сохраняю
     collection_meta_info header;
     scheme sch;
+    // name <--> offset_from_region_beg
+    map<string, long> existed_docs;
+    map<string, long> deleted_docs;
 
     explicit collection(const scheme& sch) : sch(sch), header({}){}
 
@@ -57,13 +63,13 @@ public:
 
 public:
     friend ostream& write(ostream& out, collection& col) {
-        out.write((char*)&col.header, sizeof(col.header));
+        out.write(reinterpret_cast<char*>(&col.header), sizeof(col.header));
         col.sch.write_scheme_info(out);
         return out;
     }
 
     friend istream& read(istream& in, collection& col) {
-        in.read((char*)&col.header, sizeof(col.header));
+        in.read(reinterpret_cast<char*>(&col.header), sizeof(col.header));
         col.sch.read_scheme_info(in);
         return in;
     }
@@ -89,6 +95,27 @@ public:
     void set_header(const collection_meta_info &header) {
         collection::header = header;
     }
+
+    long insert_node(fstream& file, doc_tree_info& node) {
+        long node_tree_start = header.end_documents;
+        node.add_node(file, node_tree_start);
+        existed_docs.emplace(node.node_name, node_tree_start);
+        return (long) file.tellp();
+    }
+
+    void remove_node(fstream& file, string& node_name) {
+        long offset = existed_docs.at(node_name);
+        //read node если у ноды есть дети, то не удаляем
+        //deallocate
+        // remove from existed documents
+        // add to deleted documents
+    }
+
+    void update_node(fstream& file, string& node_name) {
+        //////aaaaaaaa
+    }
+
+
 };
 
 

@@ -6,8 +6,11 @@
 #include <utility>
 #include "scheme.h"
 #include "region.h"
+#include "type.h"
 
 // TODO errors handling!
+// TODO чекать что не ушли за "пределы" документа
+// TODO change field visibility
 
 class database_info {
 public:
@@ -74,6 +77,7 @@ public:
         cout << "pointer after write collection: " << filestream.tellp() << endl;
     }
 
+    // TODO refactor
     void create_collection(fstream &filestream, collection &col) {
         if (!removed_collections.empty()) {
             long offset = removed_collections.begin()->second;
@@ -127,12 +131,32 @@ public:
         long offset = col->header.offset_from_beg;
         if (col->header.is_empty) {
             region reg;
-
             // == fill it zeroes
             reg.allocate_collection_region(file, offset);
             removed_collections.emplace(id, offset);
             existed_collections.erase(id);
         } else cout << "ERROR: can't delete collection, it's not empty" << endl;
+    }
+
+    void create_node(fstream& file, long collection_id) {
+        auto* col = new collection();
+        col->header.collection_id = collection_id;
+        read_collection_header(file, *col);
+        property_field* field = col->sch.field;
+        auto* property1 = new property(field[0].property_name, "priest", static_cast<DataTypes>(field[0].data_type));
+        auto* property2 = new property(field[1].property_name, "shapolang", static_cast<DataTypes>(field[1].data_type));
+
+        // пока так,хз что делать с свойствами ещё (так чтобы добавлял именно объект коллекции!)
+        long property_offset = col->header.end_of_last_property;
+        property1->add_property(file, property_offset);
+        col->header.end_of_last_property = property2->add_property(file, property_offset + (long)sizeof(property));
+
+        auto* node = new doc_tree_info(-1,
+                                       col->sch.collection_name,
+                                       property_offset,
+                                       (long)file.tellp(),
+                                       {});
+        col->header.end_of_last_node = col->insert_node(file, *node);
     }
 
 };
