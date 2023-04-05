@@ -7,28 +7,28 @@
 SLASH -- AST-separator
 ##### queries
 Запросы с оператором
-- `node/child_node[1]` -- выбрать из узла схемы `node` 1-го потомка схемы `child_node`
-- `node/child_node[1][@attribute =|!=| > | < num|str] ` done
-- `node/child_node[@attribute =|!=| > | < num|str][1]` done
-- `node[child_node]` done select node with 1 or more child_node done
-- `nodename` or  -- select all nodes with this name (== read collection)
+- [x]  `node/child_node[1]` -- выбрать из узла схемы `node` 1-го потомка схемы `child_node` 
+- [x] `node/child_node[1][@attribute =|!=| > | < num|str] ` 
+- [x] `node/child_node[@attribute =|!=| > | < num|str][1]` 
+- [x] `node[child_node]` done select node with 1 or more child_node done
+- [x] `nodename` or  -- select all nodes with this name (== read collection)
+- [x] `node/@attribute` -- child-nodes of node with attr==attribute
+- [x] `/node/*` -- Выбирает все элементы, которые являются прямыми потомками элемента messages==node
 
 TODO (queries)
 - `//*`-- print all db **TODO** or maybe not
-- `node/@attribute` -- child-nodes of node with attr==attribute **TODO**
 - `node/[child1node | child2node ] ` вообще в лабе такое не предусматривается (ну на сервере)
 - `//node` -- select all nodes (вне зависимости от отношений) **THINK**
 - `parent//node` -- select all node==child (вне зависимости от уровня вложенности) на серваке такого не реализовано
 - `//@attribute` -- select all nodes with attr==attribute 
-- `/node/*` -- Выбирает все элементы, которые являются прямыми потомками элемента messages==node **TODO**
 - `//node1 | //node2` -- select col1 AND col2 from db 
 - operator with substring **ADD**
 - `remove(path)` **!!!**
-- `update(path)` **!!!*
-- придумать create **!!!*
+- `update(path)` **!!!**
+- придумать create **!!!**
 
-- (?) functions between queries **optional**
-- functions like: like(), text() -- опционально
+- (?) functions between queries *optional*
+- functions like: like(), text() -- *optional*
 
 ** НЕ ЗАБЫТЬ ПРОВЕРИТЬ**
 - поддержка логической комбинации??
