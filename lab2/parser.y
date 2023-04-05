@@ -6,10 +6,15 @@ extern int yylex(void);
 void yyerror(const char * message);
 %}
 
-%token WORD NUMBER SLASH IS_ATTRIBUTE START_FILTER END_FILTER ASTERISK
+%token WORD NUMBER
+/* symbols */
+%token ASTERISK SLASH IS_ATTRIBUTE START_FILTER END_FILTER OPEN_BRACKET CLOSE_BRACKET
 /* filter tokens */
 %token EQUAL NOT_EQUAL LESS MORE
+/* functions */
+%token UPDATE REMOVE CREATE
 %%
+
 query:
         |
         query separator node filter |
@@ -18,7 +23,11 @@ query:
         query node |
         query node filter |
         query node filter filter |
-        query separator attribute ;
+        query separator attribute |
+        query function OPEN_BRACKET query CLOSE_BRACKET
+        {
+                printf("\tfunction!\n");
+        } ;
 node:
         WORD
         {
@@ -50,9 +59,13 @@ filter:
 filter_object:
             WORD |
             attribute operator WORD |
-            attribute operator NUMBER
+            attribute operator NUMBER ;
+
 operator:
     EQUAL | NOT_EQUAL | LESS | MORE ;
+
+function:
+    UPDATE | REMOVE | CREATE ;
 
 attribute:
     IS_ATTRIBUTE WORD
