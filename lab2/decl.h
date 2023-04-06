@@ -9,7 +9,7 @@
 
 struct element {
     union {
-        char* string_val;
+        char string_val[30];
         bool boolean;
         int32_t num;
         double double_num;
@@ -20,15 +20,9 @@ struct element {
 struct Filter_obj {
     int operator_val;
     struct element* val;
-    char* attribute; /*optional*/
+    char attribute[30]; /*optional*/
     struct Filter_obj* next;
 };
-
-
-/*struct filters_list {
-    struct Filter_obj* filt;
-    struct filtes_list* next;
-}*/
 
 struct property {
     char* attr_name;
@@ -36,12 +30,13 @@ struct property {
     struct property* next;
 };
 
-//struct filters_list * add_filters_list(struct Filter_obj* obj, struct filters_list* head);
 struct Filter_obj* create_filter_obj(int op, char* attribute, struct element* el);
+struct Filter_obj* create_single_filter_obj(struct element* el);
 
 void print_newline();
+void print_tab();
 void print_filter_obj(struct Filter_obj* obj);
-//void print_filters_list(struct filters_list* list);
+void print_element(struct element* el);
 
 struct element* add_int32_element(int32_t val);
 struct element* add_bool_element(int val);

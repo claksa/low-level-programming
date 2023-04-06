@@ -2,7 +2,6 @@
 
 #include "decl.h"
 
-#define YYSTYPE char *
 extern int yylex(void);
 void yyerror(const char * message);
 %}
@@ -23,21 +22,17 @@ void yyerror(const char * message);
     struct element* el;
 }
 
-%token NUMBER DOUBLE_NUM BOOL WORD
-
-%type <str> WORD
-%type <number> NUMBER
-%type <double_num> DOUBLE_NUM
-%type <bool_value> BOOL
+%token <str> WORD
+%token <number> NUMBER
+%token <double_num> DOUBLE_NUM
+%token <bool_value> BOOL
 
 /* symbols */
 %token SLASH START_FILTER END_FILTER OPEN_BRACKET CLOSE_BRACKET COMMA IS_ATTRIBUTE ASTERISK
 
 /* filter tokens */
-%token  EQUAL NOT_EQUAL LESS MORE
-%type <op> EQUAL NOT_EQUAL LESS MORE
-
-%token  INT32_TYPE DOUBLE_TYPE STRING_TYPE BOOLEAN_TYPE
+%token <op> EQUAL NOT_EQUAL LESS MORE
+%token <type> INT32_TYPE DOUBLE_TYPE STRING_TYPE BOOLEAN_TYPE
 
 /* functions */
 %token UPDATE REMOVE CREATE_EL CREATE_SCH
@@ -70,19 +65,25 @@ func:
 filters:
         filter | filters filter
             {
-                    printf("\tfilter attribute node!\n");
+                    $$ = $2;
+                    $2->next = $1;
             } ;
 
 filter:
             START_FILTER filter_object END_FILTER
             {
-                    printf("\tfilter attribute node!\n");
+                    $$ = $2;
             } ;
 
 filter_object:
+            node_value
+            {
+                $$ = create_single_filter_obj($1);
+            }
+            |
             attribute operator node_value
             {
-                /* createfilter object*/
+                $$ = create_filter_obj($2, $1, $3);
             }
             ;
 node:

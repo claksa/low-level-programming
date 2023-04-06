@@ -54,10 +54,10 @@ extern int yydebug;
     YYEOF = 0,                     /* "end of file"  */
     YYerror = 256,                 /* error  */
     YYUNDEF = 257,                 /* "invalid token"  */
-    NUMBER = 258,                  /* NUMBER  */
-    DOUBLE_NUM = 259,              /* DOUBLE_NUM  */
-    BOOL = 260,                    /* BOOL  */
-    WORD = 261,                    /* WORD  */
+    WORD = 258,                    /* WORD  */
+    NUMBER = 259,                  /* NUMBER  */
+    DOUBLE_NUM = 260,              /* DOUBLE_NUM  */
+    BOOL = 261,                    /* BOOL  */
     SLASH = 262,                   /* SLASH  */
     START_FILTER = 263,            /* START_FILTER  */
     END_FILTER = 264,              /* END_FILTER  */
@@ -86,10 +86,10 @@ extern int yydebug;
 #define YYEOF 0
 #define YYerror 256
 #define YYUNDEF 257
-#define NUMBER 258
-#define DOUBLE_NUM 259
-#define BOOL 260
-#define WORD 261
+#define WORD 258
+#define NUMBER 259
+#define DOUBLE_NUM 260
+#define BOOL 261
 #define SLASH 262
 #define START_FILTER 263
 #define END_FILTER 264
@@ -115,7 +115,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 11 "parser.y"
+#line 10 "parser.y"
 
     int number;
     int op;
