@@ -1,7 +1,4 @@
 %{
-#include <stdio.h>
-#include <string.h>
-#include <stdbool.h>
 
 #include "decl.h"
 
@@ -14,43 +11,53 @@ void yyerror(const char * message);
 {
     int number;
     int op;
+    int type;
+    int bool_value;
+    double double_num;
+
     char* str;
     char* node_name;
     char* attribute_name;
-    bool boolean;
-    double double_num;
-    filters_list*  filters_l;
+
+    struct Filter_obj* filt_obj;
+    struct element* el;
 }
 
-%token <double_num> DOUBLE_NUM
-%token <number> NUMBER
-%token <boolean> BOOL
-%token <str> WORD
+%token NUMBER DOUBLE_NUM BOOL WORD
+
+%type <str> WORD
+%type <number> NUMBER
+%type <double_num> DOUBLE_NUM
+%type <bool_value> BOOL
 
 /* symbols */
-%token SLASH START_FILTER END_FILTER OPEN_BRACKET CLOSE_BRACKET COMMA IS_ATTRIBUTE
+%token SLASH START_FILTER END_FILTER OPEN_BRACKET CLOSE_BRACKET COMMA IS_ATTRIBUTE ASTERISK
+
 /* filter tokens */
-%token <op> EQUAL NOT_EQUAL LESS MORE
+%token  EQUAL NOT_EQUAL LESS MORE
+%type <op> EQUAL NOT_EQUAL LESS MORE
+
+%token  INT32_TYPE DOUBLE_TYPE STRING_TYPE BOOLEAN_TYPE
+
 /* functions */
 %token UPDATE REMOVE CREATE_EL CREATE_SCH
 
 %type <str> attribute
-%type <op> operator
-%type <str> element
 %type <str> node
 
-%type <filters_l> filter_object
-%type <filters_l> filter
-%type <filters_l> filters
+%type <op> operator
+%type <type> val_type
+%type <el> node_value
+
+%type <filt_obj> filter_object
+%type <filt_obj> filter
+%type <filt_obj> filters
 %%
 
 query:
         |
-        query element filters
-         {
-               print_filters_list($3);
-         } |
-        query element |
+        query separator node filters |
+        query separator node |
         query node |
         query separator attribute |
         func ;
@@ -60,74 +67,61 @@ func:
                 printf("\tfunction!\n");
         } ;
 
-element:
-    separator node
-        {
-                $$=$2;
-                printf("node_name: %s", $$);
-                print_newline();
-        }
-        ;
-node:
-        WORD ;
-separator:
-          SLASH ;
 filters:
         filter | filters filter
             {
                     printf("\tfilter attribute node!\n");
-                    $$ = $2;
-                    $2->next = $1;
             } ;
+
 filter:
             START_FILTER filter_object END_FILTER
             {
                     printf("\tfilter attribute node!\n");
-                    $$ = $2;
             } ;
 
 filter_object:
-            WORD
+            attribute operator node_value
             {
-                $$ = add_filters_list(-1, add_int32_element($1), NULL);
-            }
-            |
-            NUMBER
-            {
-                $$ = add_filters_list(-1, add_str_element($1), NULL);
-            }
-            |
-            attribute operator WORD
-            {
-                $$ = add_filters_list(operator, add_str_element($3), attribute);
-            }
-            |
-            attribute operator NUMBER
-            {
-                $$ = add_filters_list(operator, add_int32_element($3), attribute);
-            }
-            |
-           attribute operator DOUBLE_NUM
-            {
-                $$ = add_filters_list(operator, add_double_element($3), attribute);
-            }
-            |
-            attribute operator BOOL
-            {
-                $$ = add_filters_list(operator, add_bool_element($3), attribute);
+                /* createfilter object*/
             }
             ;
-operator:
-    EQUAL | NOT_EQUAL | LESS | MORE ;
+node:
+         WORD ;
+separator:
+          SLASH ;
+
+node_value:
+    NUMBER
+    {
+        $$ = add_int32_element($1);
+    }
+    |
+     DOUBLE_NUM
+     {
+        $$ = add_double_element($1);
+     }
+     |
+     WORD
+     {
+        $$ = add_str_element($1);
+     }
+     |
+     BOOL
+     {
+        $$ = add_bool_element($1);
+     }
+     ;
 
 function:
-    UPDATE | REMOVE | CREATE_EL | CREATE_SCH;
+    UPDATE | REMOVE | CREATE_EL | CREATE_SCH ;
+
+operator:
+    EQUAL | NOT_EQUAL | LESS | MORE ;
 
 
 attribute:
     IS_ATTRIBUTE WORD
     {
-        printf("\tattribute!\n");
         $$ = $2;
     }
     ;

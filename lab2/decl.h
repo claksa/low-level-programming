@@ -1,74 +1,51 @@
 #ifndef LAB2_DECL_H
 #define LAB2_DECL_H
 
+#include <stdio.h>
 #include <stdbool.h>
 #include <stdint.h>
-#include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
-typedef enum QUERY {
-    CREATE_SCHEME,
-    CREATE_NODE,
-    UPDATE,
-    REMOVE,
-    SELECT,
-    SELECT_FILTER
-} QUERY;
-
-typedef enum {
-    SELECTOR,
-    OPERATION
-} Path_type;
-
-typedef enum FILTER {
-    EQUAL = 0,
-    NOT_EQUAL = 1,
-    LESS = 2,
-    MORE = 3
-} FILTER;
-
-typedef enum {
-    INT32_TYPE,
-    STRING_TYPE,
-    DOUBLE_TYPE,
-    BOOL_TYPE
-} VALUE_TYPE;
-
-typedef struct element {
+struct element {
     union {
         char* string_val;
         bool boolean;
         int32_t num;
         double double_num;
     };
-    VALUE_TYPE element_type;
-} element;
+    int element_type;
+};
 
-typedef struct {
-    FILTER operator_val;
-    element* val;
+struct Filter_obj {
+    int operator_val;
+    struct element* val;
     char* attribute; /*optional*/
-} Filter_obj;
+    struct Filter_obj* next;
+};
 
-typedef struct filters_list {
-    Filter_obj* filt;
-    filtes_list* next;
-} filters_list;
 
-typedef struct property {
+/*struct filters_list {
+    struct Filter_obj* filt;
+    struct filtes_list* next;
+}*/
+
+struct property {
     char* attr_name;
-    element* el;
-    property* next;
-} property;
+    struct element* el;
+    struct property* next;
+};
 
-filters_list* add_filters_list(int op, element* val, char* attr);
+//struct filters_list * add_filters_list(struct Filter_obj* obj, struct filters_list* head);
+struct Filter_obj* create_filter_obj(int op, char* attribute, struct element* el);
+
 void print_newline();
-void print_filter_obj(Filter_obj* obj);
-void print_filters_list(filters_list* list);
-element* add_int32_element(int32_t val);
-element* add_bool_element(bool val);
-element* add_str_element(char* val);
-element* add_double_element(double val);
+void print_filter_obj(struct Filter_obj* obj);
+//void print_filters_list(struct filters_list* list);
+
+struct element* add_int32_element(int32_t val);
+struct element* add_bool_element(int val);
+struct element* add_str_element(char* val);
+struct element* add_double_element(double val);
 
 #endif //LAB2_DECL_H

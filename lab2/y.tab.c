@@ -69,9 +69,6 @@
 /* First part of user prologue.  */
 #line 1 "parser.y"
 
-#include <stdio.h>
-#include <string.h>
-#include <stdbool.h>
 
 #include "decl.h"
 
@@ -79,7 +76,7 @@
 extern int yylex(void);
 void yyerror(const char * message);
 
-#line 83 "y.tab.c"
+#line 80 "y.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -123,8 +120,8 @@ extern int yydebug;
     YYEOF = 0,                     /* "end of file"  */
     YYerror = 256,                 /* error  */
     YYUNDEF = 257,                 /* "invalid token"  */
-    DOUBLE_NUM = 258,              /* DOUBLE_NUM  */
-    NUMBER = 259,                  /* NUMBER  */
+    NUMBER = 258,                  /* NUMBER  */
+    DOUBLE_NUM = 259,              /* DOUBLE_NUM  */
     BOOL = 260,                    /* BOOL  */
     WORD = 261,                    /* WORD  */
     SLASH = 262,                   /* SLASH  */
@@ -134,14 +131,19 @@ extern int yydebug;
     CLOSE_BRACKET = 266,           /* CLOSE_BRACKET  */
     COMMA = 267,                   /* COMMA  */
     IS_ATTRIBUTE = 268,            /* IS_ATTRIBUTE  */
-    EQUAL = 269,                   /* EQUAL  */
-    NOT_EQUAL = 270,               /* NOT_EQUAL  */
-    LESS = 271,                    /* LESS  */
-    MORE = 272,                    /* MORE  */
-    UPDATE = 273,                  /* UPDATE  */
-    REMOVE = 274,                  /* REMOVE  */
-    CREATE_EL = 275,               /* CREATE_EL  */
-    CREATE_SCH = 276               /* CREATE_SCH  */
+    ASTERISK = 269,                /* ASTERISK  */
+    EQUAL = 270,                   /* EQUAL  */
+    NOT_EQUAL = 271,               /* NOT_EQUAL  */
+    LESS = 272,                    /* LESS  */
+    MORE = 273,                    /* MORE  */
+    INT32_TYPE = 274,              /* INT32_TYPE  */
+    DOUBLE_TYPE = 275,             /* DOUBLE_TYPE  */
+    STRING_TYPE = 276,             /* STRING_TYPE  */
+    BOOLEAN_TYPE = 277,            /* BOOLEAN_TYPE  */
+    UPDATE = 278,                  /* UPDATE  */
+    REMOVE = 279,                  /* REMOVE  */
+    CREATE_EL = 280,               /* CREATE_EL  */
+    CREATE_SCH = 281               /* CREATE_SCH  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -150,8 +152,8 @@ extern int yydebug;
 #define YYEOF 0
 #define YYerror 256
 #define YYUNDEF 257
-#define DOUBLE_NUM 258
-#define NUMBER 259
+#define NUMBER 258
+#define DOUBLE_NUM 259
 #define BOOL 260
 #define WORD 261
 #define SLASH 262
@@ -161,31 +163,40 @@ extern int yydebug;
 #define CLOSE_BRACKET 266
 #define COMMA 267
 #define IS_ATTRIBUTE 268
-#define EQUAL 269
-#define NOT_EQUAL 270
-#define LESS 271
-#define MORE 272
-#define UPDATE 273
-#define REMOVE 274
-#define CREATE_EL 275
-#define CREATE_SCH 276
+#define ASTERISK 269
+#define EQUAL 270
+#define NOT_EQUAL 271
+#define LESS 272
+#define MORE 273
+#define INT32_TYPE 274
+#define DOUBLE_TYPE 275
+#define STRING_TYPE 276
+#define BOOLEAN_TYPE 277
+#define UPDATE 278
+#define REMOVE 279
+#define CREATE_EL 280
+#define CREATE_SCH 281
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 14 "parser.y"
+#line 11 "parser.y"
 
     int number;
     int op;
+    int type;
+    int bool_value;
+    double double_num;
+
     char* str;
     char* node_name;
     char* attribute_name;
-    bool boolean;
-    double double_num;
-    filters_list*  filters_l;
 
-#line 189 "y.tab.c"
+    struct Filter_obj* filt_obj;
+    struct element* el;
+
+#line 200 "y.tab.c"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -208,8 +219,8 @@ enum yysymbol_kind_t
   YYSYMBOL_YYEOF = 0,                      /* "end of file"  */
   YYSYMBOL_YYerror = 1,                    /* error  */
   YYSYMBOL_YYUNDEF = 2,                    /* "invalid token"  */
-  YYSYMBOL_DOUBLE_NUM = 3,                 /* DOUBLE_NUM  */
-  YYSYMBOL_NUMBER = 4,                     /* NUMBER  */
+  YYSYMBOL_NUMBER = 3,                     /* NUMBER  */
+  YYSYMBOL_DOUBLE_NUM = 4,                 /* DOUBLE_NUM  */
   YYSYMBOL_BOOL = 5,                       /* BOOL  */
   YYSYMBOL_WORD = 6,                       /* WORD  */
   YYSYMBOL_SLASH = 7,                      /* SLASH  */
@@ -219,26 +230,31 @@ enum yysymbol_kind_t
   YYSYMBOL_CLOSE_BRACKET = 11,             /* CLOSE_BRACKET  */
   YYSYMBOL_COMMA = 12,                     /* COMMA  */
   YYSYMBOL_IS_ATTRIBUTE = 13,              /* IS_ATTRIBUTE  */
-  YYSYMBOL_EQUAL = 14,                     /* EQUAL  */
-  YYSYMBOL_NOT_EQUAL = 15,                 /* NOT_EQUAL  */
-  YYSYMBOL_LESS = 16,                      /* LESS  */
-  YYSYMBOL_MORE = 17,                      /* MORE  */
-  YYSYMBOL_UPDATE = 18,                    /* UPDATE  */
-  YYSYMBOL_REMOVE = 19,                    /* REMOVE  */
-  YYSYMBOL_CREATE_EL = 20,                 /* CREATE_EL  */
-  YYSYMBOL_CREATE_SCH = 21,                /* CREATE_SCH  */
-  YYSYMBOL_YYACCEPT = 22,                  /* $accept  */
-  YYSYMBOL_query = 23,                     /* query  */
-  YYSYMBOL_func = 24,                      /* func  */
-  YYSYMBOL_element = 25,                   /* element  */
-  YYSYMBOL_node = 26,                      /* node  */
-  YYSYMBOL_separator = 27,                 /* separator  */
-  YYSYMBOL_filters = 28,                   /* filters  */
-  YYSYMBOL_filter = 29,                    /* filter  */
-  YYSYMBOL_filter_object = 30,             /* filter_object  */
-  YYSYMBOL_operator = 31,                  /* operator  */
-  YYSYMBOL_function = 32,                  /* function  */
-  YYSYMBOL_attribute = 33                  /* attribute  */
+  YYSYMBOL_ASTERISK = 14,                  /* ASTERISK  */
+  YYSYMBOL_EQUAL = 15,                     /* EQUAL  */
+  YYSYMBOL_NOT_EQUAL = 16,                 /* NOT_EQUAL  */
+  YYSYMBOL_LESS = 17,                      /* LESS  */
+  YYSYMBOL_MORE = 18,                      /* MORE  */
+  YYSYMBOL_INT32_TYPE = 19,                /* INT32_TYPE  */
+  YYSYMBOL_DOUBLE_TYPE = 20,               /* DOUBLE_TYPE  */
+  YYSYMBOL_STRING_TYPE = 21,               /* STRING_TYPE  */
+  YYSYMBOL_BOOLEAN_TYPE = 22,              /* BOOLEAN_TYPE  */
+  YYSYMBOL_UPDATE = 23,                    /* UPDATE  */
+  YYSYMBOL_REMOVE = 24,                    /* REMOVE  */
+  YYSYMBOL_CREATE_EL = 25,                 /* CREATE_EL  */
+  YYSYMBOL_CREATE_SCH = 26,                /* CREATE_SCH  */
+  YYSYMBOL_YYACCEPT = 27,                  /* $accept  */
+  YYSYMBOL_query = 28,                     /* query  */
+  YYSYMBOL_func = 29,                      /* func  */
+  YYSYMBOL_filters = 30,                   /* filters  */
+  YYSYMBOL_filter = 31,                    /* filter  */
+  YYSYMBOL_filter_object = 32,             /* filter_object  */
+  YYSYMBOL_node = 33,                      /* node  */
+  YYSYMBOL_separator = 34,                 /* separator  */
+  YYSYMBOL_node_value = 35,                /* node_value  */
+  YYSYMBOL_function = 36,                  /* function  */
+  YYSYMBOL_operator = 37,                  /* operator  */
+  YYSYMBOL_attribute = 38                  /* attribute  */
 };
 typedef enum yysymbol_kind_t yysymbol_kind_t;
 
@@ -566,19 +582,19 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  3
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   35
+#define YYLAST   34
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  22
+#define YYNTOKENS  27
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  12
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  29
+#define YYNRULES  27
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  39
+#define YYNSTATES  37
 
 /* YYMAXUTOK -- Last valid token kind.  */
-#define YYMAXUTOK   276
+#define YYMAXUTOK   281
 
 
 /* YYTRANSLATE(TOKEN-NUM) -- Symbol number corresponding to TOKEN-NUM
@@ -619,16 +635,17 @@ static const yytype_int8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
        5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
-      15,    16,    17,    18,    19,    20,    21
+      15,    16,    17,    18,    19,    20,    21,    22,    23,    24,
+      25,    26
 };
 
 #if YYDEBUG
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
-static const yytype_uint8 yyrline[] =
+static const yytype_int8 yyrline[] =
 {
-       0,    47,    47,    49,    53,    54,    55,    56,    58,    64,
-      72,    74,    76,    76,    83,    90,    95,   100,   105,   110,
-     115,   121,   121,   121,   121,   124,   124,   124,   124,   128
+       0,    58,    58,    60,    61,    62,    63,    64,    66,    72,
+      72,    78,    84,    90,    92,    95,   100,   105,   110,   117,
+     117,   117,   117,   120,   120,   120,   120,   124
 };
 #endif
 
@@ -644,12 +661,13 @@ static const char *yysymbol_name (yysymbol_kind_t yysymbol) YY_ATTRIBUTE_UNUSED;
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
 static const char *const yytname[] =
 {
-  "\"end of file\"", "error", "\"invalid token\"", "DOUBLE_NUM", "NUMBER",
+  "\"end of file\"", "error", "\"invalid token\"", "NUMBER", "DOUBLE_NUM",
   "BOOL", "WORD", "SLASH", "START_FILTER", "END_FILTER", "OPEN_BRACKET",
-  "CLOSE_BRACKET", "COMMA", "IS_ATTRIBUTE", "EQUAL", "NOT_EQUAL", "LESS",
-  "MORE", "UPDATE", "REMOVE", "CREATE_EL", "CREATE_SCH", "$accept",
-  "query", "func", "element", "node", "separator", "filters", "filter",
-  "filter_object", "operator", "function", "attribute", YY_NULLPTR
+  "CLOSE_BRACKET", "COMMA", "IS_ATTRIBUTE", "ASTERISK", "EQUAL",
+  "NOT_EQUAL", "LESS", "MORE", "INT32_TYPE", "DOUBLE_TYPE", "STRING_TYPE",
+  "BOOLEAN_TYPE", "UPDATE", "REMOVE", "CREATE_EL", "CREATE_SCH", "$accept",
+  "query", "func", "filters", "filter", "filter_object", "node",
+  "separator", "node_value", "function", "operator", "attribute", YY_NULLPTR
 };
 
 static const char *
@@ -659,7 +677,7 @@ yysymbol_name (yysymbol_kind_t yysymbol)
 }
 #endif
 
-#define YYPACT_NINF (-12)
+#define YYPACT_NINF (-14)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
@@ -673,10 +691,10 @@ yysymbol_name (yysymbol_kind_t yysymbol)
    STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-     -12,     0,   -12,   -12,   -12,   -12,   -12,   -12,   -12,   -12,
-      -6,   -12,    -5,     3,    -1,    -6,   -12,    -2,   -12,   -12,
-     -12,   -12,   -12,     5,    12,   -12,   -12,     4,   -12,   -12,
-     -12,   -12,   -12,    27,   -12,   -12,   -12,   -12,   -12
+     -14,     0,   -14,   -14,   -14,   -14,   -14,   -14,   -14,   -14,
+     -14,    -5,    -1,     6,     5,   -14,   -14,   -14,     1,     5,
+     -14,     4,    11,   -13,   -14,   -14,   -14,   -14,   -14,   -14,
+     -14,    13,   -14,   -14,   -14,   -14,   -14
 };
 
 /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -684,24 +702,24 @@ static const yytype_int8 yypact[] =
    means the default is an error.  */
 static const yytype_int8 yydefact[] =
 {
-       2,     0,     7,     1,    10,    11,    25,    26,    27,    28,
-       4,     5,     0,     0,     0,     3,    12,     0,     9,     6,
-       2,    16,    15,     0,     0,    13,    29,     0,    14,    21,
-      22,    23,    24,     0,     8,    19,    18,    20,    17
+       2,     0,     7,     1,    13,    14,    19,    20,    21,    22,
+       5,     0,     0,     0,     4,     6,     2,    27,     0,     3,
+       9,     0,     0,     0,    10,     8,    11,    23,    24,    25,
+      26,     0,    15,    16,    18,    17,    12
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -12,   -11,   -12,   -12,    22,   -12,   -12,     1,   -12,   -12,
-     -12,    21
+     -14,    15,   -14,   -14,     2,   -14,    21,   -14,   -14,   -14,
+     -14,    16
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-       0,     1,     2,    10,    11,    12,    15,    16,    23,    33,
-      13,    19
+       0,     1,     2,    19,    20,    22,    10,    11,    36,    12,
+      31,    15
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -709,44 +727,44 @@ static const yytype_int8 yydefgoto[] =
    number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-       3,     4,    14,    21,    26,    22,     4,     5,    17,    27,
-       4,     5,    17,    20,    28,    34,    25,     0,     6,     7,
-       8,     9,     6,     7,     8,     9,    29,    30,    31,    32,
-      35,    36,    37,    38,    18,    24
+       3,     4,    27,    28,    29,    30,     4,     5,    13,    16,
+       4,     5,    17,    18,    13,    25,    32,    33,    34,    35,
+      26,    24,     0,     6,     7,     8,     9,     6,     7,     8,
+       9,    21,    14,     0,    23
 };
 
 static const yytype_int8 yycheck[] =
 {
-       0,     6,     8,     4,     6,     6,     6,     7,    13,    20,
-       6,     7,    13,    10,     9,    11,    15,    -1,    18,    19,
-      20,    21,    18,    19,    20,    21,    14,    15,    16,    17,
-       3,     4,     5,     6,    12,    14
+       0,     6,    15,    16,    17,    18,     6,     7,    13,    10,
+       6,     7,     6,     8,    13,    11,     3,     4,     5,     6,
+       9,    19,    -1,    23,    24,    25,    26,    23,    24,    25,
+      26,    16,    11,    -1,    18
 };
 
 /* YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
    state STATE-NUM.  */
 static const yytype_int8 yystos[] =
 {
-       0,    23,    24,     0,     6,     7,    18,    19,    20,    21,
-      25,    26,    27,    32,     8,    28,    29,    13,    26,    33,
-      10,     4,     6,    30,    33,    29,     6,    23,     9,    14,
-      15,    16,    17,    31,    11,     3,     4,     5,     6
+       0,    28,    29,     0,     6,     7,    23,    24,    25,    26,
+      33,    34,    36,    13,    33,    38,    10,     6,     8,    30,
+      31,    28,    32,    38,    31,    11,     9,    15,    16,    17,
+      18,    37,     3,     4,     5,     6,    35
 };
 
 /* YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr1[] =
 {
-       0,    22,    23,    23,    23,    23,    23,    23,    24,    25,
-      26,    27,    28,    28,    29,    30,    30,    30,    30,    30,
-      30,    31,    31,    31,    31,    32,    32,    32,    32,    33
+       0,    27,    28,    28,    28,    28,    28,    28,    29,    30,
+      30,    31,    32,    33,    34,    35,    35,    35,    35,    36,
+      36,    36,    36,    37,    37,    37,    37,    38
 };
 
 /* YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr2[] =
 {
-       0,     2,     0,     3,     2,     2,     3,     1,     5,     2,
-       1,     1,     1,     2,     3,     1,     1,     3,     3,     3,
-       3,     1,     1,     1,     1,     1,     1,     1,     1,     2
+       0,     2,     0,     4,     3,     2,     3,     1,     5,     1,
+       2,     3,     3,     1,     1,     1,     1,     1,     1,     1,
+       1,     1,     1,     1,     1,     1,     1,     2
 };
 
 
@@ -1209,110 +1227,80 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
-  case 3: /* query: query element filters  */
-#line 50 "parser.y"
-         {
-               print_filters_list((yyvsp[0].filters_l));
-         }
-#line 1218 "y.tab.c"
-    break;
-
   case 8: /* func: query function OPEN_BRACKET query CLOSE_BRACKET  */
-#line 59 "parser.y"
+#line 67 "parser.y"
         {
                 printf("\tfunction!\n");
-        }
-#line 1226 "y.tab.c"
-    break;
-
-  case 9: /* element: separator node  */
-#line 65 "parser.y"
-        {
-                (yyval.str)=(yyvsp[0].str);
-                printf("node_name: %s", (yyval.str));
-                print_newline();
         }
 #line 1236 "y.tab.c"
     break;
 
-  case 13: /* filters: filters filter  */
-#line 77 "parser.y"
+  case 10: /* filters: filters filter  */
+#line 73 "parser.y"
             {
                     printf("\tfilter attribute node!\n");
-                    (yyval.filters_l) = (yyvsp[0].filters_l);
-                    (yyvsp[0].filters_l)->next = (yyvsp[-1].filters_l);
             }
-#line 1246 "y.tab.c"
+#line 1244 "y.tab.c"
     break;
 
-  case 14: /* filter: START_FILTER filter_object END_FILTER  */
-#line 84 "parser.y"
+  case 11: /* filter: START_FILTER filter_object END_FILTER  */
+#line 79 "parser.y"
             {
                     printf("\tfilter attribute node!\n");
-                    (yyval.filters_l) = (yyvsp[-1].filters_l);
             }
-#line 1255 "y.tab.c"
+#line 1252 "y.tab.c"
     break;
 
-  case 15: /* filter_object: WORD  */
-#line 91 "parser.y"
+  case 12: /* filter_object: attribute operator node_value  */
+#line 85 "parser.y"
             {
-                (yyval.filters_l) = add_filters_list(-1, add_int32_element((yyvsp[0].str)), NULL);
+                /* createfilter object*/
             }
-#line 1263 "y.tab.c"
+#line 1260 "y.tab.c"
     break;
 
-  case 16: /* filter_object: NUMBER  */
+  case 15: /* node_value: NUMBER  */
 #line 96 "parser.y"
-            {
-                (yyval.filters_l) = add_filters_list(-1, add_str_element((yyvsp[0].number)), NULL);
-            }
-#line 1271 "y.tab.c"
-    break;
-
-  case 17: /* filter_object: attribute operator WORD  */
-#line 101 "parser.y"
-            {
-                (yyval.filters_l) = add_filters_list(operator, add_str_element((yyvsp[0].str)), attribute);
-            }
-#line 1279 "y.tab.c"
-    break;
-
-  case 18: /* filter_object: attribute operator NUMBER  */
-#line 106 "parser.y"
-            {
-                (yyval.filters_l) = add_filters_list(operator, add_int32_element((yyvsp[0].number)), attribute);
-            }
-#line 1287 "y.tab.c"
-    break;
-
-  case 19: /* filter_object: attribute operator DOUBLE_NUM  */
-#line 111 "parser.y"
-            {
-                (yyval.filters_l) = add_filters_list(operator, add_double_element((yyvsp[0].double_num)), attribute);
-            }
-#line 1295 "y.tab.c"
-    break;
-
-  case 20: /* filter_object: attribute operator BOOL  */
-#line 116 "parser.y"
-            {
-                (yyval.filters_l) = add_filters_list(operator, add_bool_element((yyvsp[0].boolean)), attribute);
-            }
-#line 1303 "y.tab.c"
-    break;
-
-  case 29: /* attribute: IS_ATTRIBUTE WORD  */
-#line 129 "parser.y"
     {
-        printf("\tattribute!\n");
+        (yyval.el) = add_int32_element((yyvsp[0].number));
+    }
+#line 1268 "y.tab.c"
+    break;
+
+  case 16: /* node_value: DOUBLE_NUM  */
+#line 101 "parser.y"
+     {
+        (yyval.el) = add_double_element((yyvsp[0].double_num));
+     }
+#line 1276 "y.tab.c"
+    break;
+
+  case 17: /* node_value: WORD  */
+#line 106 "parser.y"
+     {
+        (yyval.el) = add_str_element((yyvsp[0].str));
+     }
+#line 1284 "y.tab.c"
+    break;
+
+  case 18: /* node_value: BOOL  */
+#line 111 "parser.y"
+     {
+        (yyval.el) = add_bool_element((yyvsp[0].bool_value));
+     }
+#line 1292 "y.tab.c"
+    break;
+
+  case 27: /* attribute: IS_ATTRIBUTE WORD  */
+#line 125 "parser.y"
+    {
         (yyval.str) = (yyvsp[0].str);
     }
-#line 1312 "y.tab.c"
+#line 1300 "y.tab.c"
     break;
 
 
-#line 1316 "y.tab.c"
+#line 1304 "y.tab.c"
 
       default: break;
     }
@@ -1505,7 +1493,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 135 "parser.y"
+#line 130 "parser.y"
 
 void yyerror(const char *str)
 {

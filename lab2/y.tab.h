@@ -54,8 +54,8 @@ extern int yydebug;
     YYEOF = 0,                     /* "end of file"  */
     YYerror = 256,                 /* error  */
     YYUNDEF = 257,                 /* "invalid token"  */
-    DOUBLE_NUM = 258,              /* DOUBLE_NUM  */
-    NUMBER = 259,                  /* NUMBER  */
+    NUMBER = 258,                  /* NUMBER  */
+    DOUBLE_NUM = 259,              /* DOUBLE_NUM  */
     BOOL = 260,                    /* BOOL  */
     WORD = 261,                    /* WORD  */
     SLASH = 262,                   /* SLASH  */
@@ -65,14 +65,19 @@ extern int yydebug;
     CLOSE_BRACKET = 266,           /* CLOSE_BRACKET  */
     COMMA = 267,                   /* COMMA  */
     IS_ATTRIBUTE = 268,            /* IS_ATTRIBUTE  */
-    EQUAL = 269,                   /* EQUAL  */
-    NOT_EQUAL = 270,               /* NOT_EQUAL  */
-    LESS = 271,                    /* LESS  */
-    MORE = 272,                    /* MORE  */
-    UPDATE = 273,                  /* UPDATE  */
-    REMOVE = 274,                  /* REMOVE  */
-    CREATE_EL = 275,               /* CREATE_EL  */
-    CREATE_SCH = 276               /* CREATE_SCH  */
+    ASTERISK = 269,                /* ASTERISK  */
+    EQUAL = 270,                   /* EQUAL  */
+    NOT_EQUAL = 271,               /* NOT_EQUAL  */
+    LESS = 272,                    /* LESS  */
+    MORE = 273,                    /* MORE  */
+    INT32_TYPE = 274,              /* INT32_TYPE  */
+    DOUBLE_TYPE = 275,             /* DOUBLE_TYPE  */
+    STRING_TYPE = 276,             /* STRING_TYPE  */
+    BOOLEAN_TYPE = 277,            /* BOOLEAN_TYPE  */
+    UPDATE = 278,                  /* UPDATE  */
+    REMOVE = 279,                  /* REMOVE  */
+    CREATE_EL = 280,               /* CREATE_EL  */
+    CREATE_SCH = 281               /* CREATE_SCH  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -81,8 +86,8 @@ extern int yydebug;
 #define YYEOF 0
 #define YYerror 256
 #define YYUNDEF 257
-#define DOUBLE_NUM 258
-#define NUMBER 259
+#define NUMBER 258
+#define DOUBLE_NUM 259
 #define BOOL 260
 #define WORD 261
 #define SLASH 262
@@ -92,31 +97,40 @@ extern int yydebug;
 #define CLOSE_BRACKET 266
 #define COMMA 267
 #define IS_ATTRIBUTE 268
-#define EQUAL 269
-#define NOT_EQUAL 270
-#define LESS 271
-#define MORE 272
-#define UPDATE 273
-#define REMOVE 274
-#define CREATE_EL 275
-#define CREATE_SCH 276
+#define ASTERISK 269
+#define EQUAL 270
+#define NOT_EQUAL 271
+#define LESS 272
+#define MORE 273
+#define INT32_TYPE 274
+#define DOUBLE_TYPE 275
+#define STRING_TYPE 276
+#define BOOLEAN_TYPE 277
+#define UPDATE 278
+#define REMOVE 279
+#define CREATE_EL 280
+#define CREATE_SCH 281
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 14 "parser.y"
+#line 11 "parser.y"
 
     int number;
     int op;
+    int type;
+    int bool_value;
+    double double_num;
+
     char* str;
     char* node_name;
     char* attribute_name;
-    bool boolean;
-    double double_num;
-    filters_list*  filters_l;
 
-#line 120 "y.tab.h"
+    struct Filter_obj* filt_obj;
+    struct element* el;
+
+#line 134 "y.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

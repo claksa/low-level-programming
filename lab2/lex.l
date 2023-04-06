@@ -1,5 +1,5 @@
 %{
-#include <stdio.h>
+
 #include "decl.h"
 #include "y.tab.h"
 
@@ -10,11 +10,15 @@
 "create_element"        {return CREATE_EL;}
 "create_schema"         {return CREATE_SCH;}
 
+"type=int32"     {yylval.type = 0; return INT32_TYPE;}
+"type=double"    {yylval.type = 1; return DOUBLE_TYPE;}
+"type=string"    {yylval.type = 2; return STRING_TYPE;}
+"type=bool"      {yylval.type = 3; return BOOLEAN_TYPE;}
 
+"true"                           {yylval.bool_value = 1; return BOOL;}
+"false"                          {yylval.bool_value = 0; return BOOL;}
 ([+-]?[0-9])+                    {yylval.number = atoi(yytext); return NUMBER;}
 [+-]?([0-9]*[.])?[0-9]+          {yylval.number = atof(yytext); return DOUBLE_NUM;}
-"true"                           {yylval.boolean = true; return BOOL;}
-"false"                          {yylval.boolean = false; return BOOL;}
 [a-zA-Z][a-zA-Z0-9]*             {yylval.str = strdup(yytext); return WORD;}
 
 "="                      {yylval.op = 0; return EQUAL;}
