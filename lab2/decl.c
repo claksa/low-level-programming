@@ -19,6 +19,14 @@ void print_el_for_single_filter(struct element* el) {
     print_newline();
 }
 
+void print_filters(struct Filter_obj* filter) {
+        if (filter->is_single_val) {
+            print_el_for_single_filter(filter->val);
+        } else {
+            print_filter_obj(filter);
+        }
+}
+
 struct Filter_obj* create_single_filter_obj(struct element* el) {
     struct Filter_obj * obj = (struct Filter_obj*) malloc(sizeof(struct Filter_obj*));
     if (obj == NULL) {
@@ -26,8 +34,9 @@ struct Filter_obj* create_single_filter_obj(struct element* el) {
         print_newline();
         return NULL;
     }
+    obj->is_single_val = true;
     obj->val = el;
-    print_el_for_single_filter(el);
+    print_el_for_single_filter(obj->val);
     return obj;
 }
 
@@ -38,6 +47,7 @@ struct Filter_obj* create_filter_obj(int op, char* attribute, struct element* el
         print_newline();
         return NULL;
     }
+    obj->is_single_val = false;
     obj->val = el;
     obj->operator_val = op;
     strcpy(obj->attribute, attribute);

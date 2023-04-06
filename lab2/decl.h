@@ -19,6 +19,7 @@ struct element {
 
 struct Filter_obj {
     int operator_val;
+    bool is_single_val;
     struct element* val;
     char attribute[30]; /*optional*/
     struct Filter_obj* next;
@@ -37,6 +38,7 @@ void print_newline();
 void print_tab();
 void print_filter_obj(struct Filter_obj* obj);
 void print_element(struct element* el);
+void print_filters(struct Filter_obj* filter);
 
 struct element* add_int32_element(int32_t val);
 struct element* add_bool_element(int val);

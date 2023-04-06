@@ -51,10 +51,9 @@ void yyerror(const char * message);
 
 query:
         |
-        query separator node filters |
-        query separator node |
+        query node filters
+        |
         query node |
-        query separator attribute |
         func ;
 func:
      query function OPEN_BRACKET query CLOSE_BRACKET
@@ -87,7 +86,33 @@ filter_object:
             }
             ;
 node:
-         WORD ;
+         separator WORD
+         {
+            print_tab();
+            printf("descendant: ");
+            print_newline();
+            print_tab();
+            print_tab();
+            printf(" ---> shema name: %s", $2);
+            print_newline();
+         }
+         |
+         WORD
+         {
+            printf("select all elements: ");
+            print_newline();
+            print_tab();
+            printf(" --> schema name: %s", $1);
+            print_newline();
+         }
+         |
+         separator IS_ATTRIBUTE WORD
+         {
+            print_tab();
+            printf("--> node property: %s", $3);
+            print_newline();
+         }
+          ;
 separator:
           SLASH ;
 
