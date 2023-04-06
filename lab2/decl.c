@@ -1,7 +1,6 @@
 #ifndef LAB2_MAIN_H
 #define LAB2_MAIN_H
 
-
 #include "decl.h"
 
 
