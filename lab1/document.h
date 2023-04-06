@@ -70,9 +70,10 @@ public:
 };
 
 class property {
+public:
     string property_name;
     node_type val;
-public:
+
     property():
     property_name(""),
     val(0)

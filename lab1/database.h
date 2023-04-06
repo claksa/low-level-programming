@@ -6,7 +6,6 @@
 #include <utility>
 #include "scheme.h"
 #include "region.h"
-#include "query.h"
 
 // TODO errors handling!
 // TODO чекать что не ушли за "пределы" документа
@@ -181,14 +180,16 @@ public:
         col->read_node_tree(file);
     }
 
-    void remove_node(fstream& file, remove_node_query& query) {
+    void enumerate_nodes_by_filter(fstream& file, filter_query& query) {
         auto* col = new collection();
         col->header.collection_id = query.collection_id;
+        cout << "IN READ operation: " << endl;
         read_collection_header(file, *col);
         if (col->header.is_empty) {
-            cout << "no documents in collection " << endl;
-            return;
+            cout << "no nodes to enumerate " << endl;
         }
+        // TODO validate node_type from query
+        col->enumerate_by_filter(file, query.filter);
     }
 
 };

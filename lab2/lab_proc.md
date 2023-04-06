@@ -15,6 +15,15 @@ SLASH -- AST-separator
 - [x] `node/@attribute` -- child-nodes of node with attr==attribute
 - [x] `/node/*` -- Выбирает все элементы, которые являются прямыми потомками элемента messages==node
 
+- [ ] `/node` -- выбрать все узлы схемы нода
+- [ ] `/node/foo` -- выбрать ноды foo, которые являются потомками node
+
+
+- [ ] `update(/node/foo[1][@attribute=value][@attribute=value])`
+- [ ] `remove(path)`
+- [ ] `create_element(/node/foo[1][@attribute=value][@attribute=value]))`
+- [ ] `create_schema(path)` -- путь как будто работаем в `xsd`
+
 TODO (queries)
 - `//*`-- print all db **TODO** or maybe not
 - `node/[child1node | child2node ] ` вообще в лабе такое не предусматривается (ну на сервере)
@@ -23,9 +32,6 @@ TODO (queries)
 - `//@attribute` -- select all nodes with attr==attribute 
 - `//node1 | //node2` -- select col1 AND col2 from db 
 - operator with substring **ADD**
-- `remove(path)` **!!!**
-- `update(path)` **!!!**
-- придумать create **!!!**
 
 - (?) functions between queries *optional*
 - functions like: like(), text() -- *optional*

@@ -1,11 +1,14 @@
 all: build
 
+run:
+	./main
+
 build:
 	yacc -d -Wcounterexamples parser.y
 	flex lex.l
-	gcc lex.yy.c y.tab.c -o lex
+	gcc main.c lex.yy.c y.tab.c -o main
 
 clean:
-	rm -f lex.yy.c lex y.tab.c y.tab.h
+	rm -f lex.yy.c main y.tab.c y.tab.h
 
 .PHONY:	clean

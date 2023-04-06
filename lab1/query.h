@@ -15,9 +15,32 @@ struct add_node_query {
     long* children;
 };
 
-struct remove_node_query {
-    long collection_id;
-    string node_name;
+enum OPERATION {
+    UPDATE,
+    REMOVE
+//    ENUMERATE
 };
+
+enum FILTER {
+    EQUAL,
+    NOT_EQUAL,
+    LESS,
+    MORE,
+    LESS_OR_EQUAL,
+    MORE_OR_EQUAL
+};
+
+struct filter {
+//    string node_name;
+    string property_name;
+    node_type value;
+    FILTER filter_operator;
+};
+
+struct filter_query {
+    long collection_id;
+    filter filter;
+};
+
 
 #endif //LLP_QUERY_H

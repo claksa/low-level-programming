@@ -4,6 +4,7 @@
 #include <iosfwd>
 #include <iostream>
 #include "scheme.h"
+#include "query.h"
 
 using namespace std;
 
@@ -122,6 +123,54 @@ public:
             offset = offset + (long) sizeof(doc_tree_info);
             file.seekp(offset, ios_base::beg);
         }
+    }
+
+    void enumerate_by_filter(fstream& file, filter& filter) const {
+        node_type value = filter.value;
+        long offset = header.end_documents; // and start node tree info
+        file.seekp(offset, ios_base::beg);
+        while ((long)file.tellp() != header.end_of_last_node)  {
+            auto* node = new doc_tree_info();
+            node->read_node(file, offset);
+            cout << *node;
+            cout << "---" << endl;
+
+            long start_property = node->start_content_offset;
+            for (int i = 0; i < node->real_properties_size; i++) {
+                auto* p = new property();
+                p->read_property(file,(long) (start_property + i*sizeof(property)));
+                if (p->property_name != filter.property_name) continue;
+
+                switch(filter.filter_operator) {
+                    case EQUAL:
+                        if (p->val == filter.value) cout << *p;
+                        break;
+                    case NOT_EQUAL:
+                        if (p->val != filter.value) cout << *p;
+                        break;
+                    case LESS:
+                        if (p->val < filter.value) cout << *p;
+                        break;
+                    case MORE:
+                        if (p->val > filter.value) cout << *p;
+                        break;
+                    case LESS_OR_EQUAL:
+                        if (p->val <= filter.value) cout << *p;
+                        break;
+                    case MORE_OR_EQUAL:
+                        if (p->val >= filter.value) cout << *p;
+                        break;
+                }
+            }
+
+            cout << endl;
+            offset = offset + (long) sizeof(doc_tree_info);
+            file.seekp(offset, ios_base::beg);
+        }
+    }
+
+    void update_by_filter(fstream &file, filter& filter) {
+        // rewrite
     }
 
 };
