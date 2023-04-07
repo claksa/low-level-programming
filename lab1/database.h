@@ -295,6 +295,56 @@ public:
         }
     }
 
+    void update_nodes_by_filter(fstream& file, filter_query& query) {
+        auto* col = new collection();
+        col->header.collection_id = query.collection_id;
+        cout << "IN READ operation: " << endl;
+        read_collection_header(file, *col);
+        if (col->header.is_empty) {
+            cout << "no nodes to enumerate " << endl;
+        }
+        cout << "IN READ COLLECTION: " << endl;
+        file.seekp(ios_base::beg);
+        long pointer = (long) file.tellp();
+        while(pointer != current_pointer) {
+            region_header header;
+            read_region_header(file, header, pointer);
+            if (header.type == COLLECTION) {
+                long off = (long) file.tellp();
+                pointer = off+ (long) COLLECTION_HEADER_SIZE;
+                file.seekp(off+ (long) COLLECTION_HEADER_SIZE, ios_base::beg);
+            }
+            if (header.type == NODE) {
+                auto* node = new doc_tree_info();
+                node->read_node(file, (long)file.tellg());
+                if (node->collection_id != query.collection_id) {
+                    long properties_size = (long) (node->real_properties_size* sizeof(property));
+                    file.seekp(properties_size, ios_base::cur);
+                    pointer = (long) file.tellp();
+                    continue;
+                }
+                cout << "node doc tree: " << endl;
+                cout << *node;
+                cout << "---" << endl;
+                long start_property = (long) file.tellg();
+                for (int i = 0; i < node->real_properties_size; i++) {
+                    auto* p = new property();
+                    long before_read_of = (long) file.tellp();
+                    p->read_property(file,(long) (start_property + i*sizeof(property)));
+                    if (p->property_name != query.filter.property_name) {
+                        continue;
+                    }
+                    p->val = query.filter.value;
+                    p->add_property(file, before_read_of); // offset changed new_property ^offset
+                }
+                pointer = (long) file.tellp();
+                cout << endl;
+            }
+        }
+    }
+
+
+
 };
 
 #endif //LLP_DATABASE_H
