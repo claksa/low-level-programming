@@ -32,7 +32,7 @@ void test_collection() {
     database::close(filestream);
 }
 
-void test_node_insert_and_read_all() {
+void test_node_insert_and_enum_op() {
     fstream filestream;
     database db((database_info()));
     db.open(filestream);

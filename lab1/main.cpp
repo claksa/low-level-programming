@@ -2,6 +2,8 @@
 
 
 int main() {
-    test_node_insert_and_read_all();
+    test_file();
+    test_collection();
+    test_node_insert_and_enum_op();
     return 0;
 }

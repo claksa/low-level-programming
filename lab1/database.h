@@ -19,6 +19,8 @@ public:
     {}
 };
 
+typedef pair<long, long> node_id; // col_id + node_id
+
 class database {
     database_info meta;
 //    vector<region> regions;
@@ -27,6 +29,10 @@ public:
     // removed_id <-> its offset
     map<long, long> removed_collections;
     map<long, long> existed_collections;
+
+    map<node_id, long> existed_docs_cache;
+    map<node_id, long> removed_docs_cache;
+
     long current_pointer = DB_OFFSET;
     static inline long col_docs_size = NODE_INFO_SIZE+NODE_TREE_INFO_SIZE+COLLECTION_HEADER_SIZE;
     explicit database(database_info meta) : meta(std::move(meta)) {}
@@ -377,7 +383,10 @@ public:
                         continue;
                     }
                     if (p->val != query.filter.value) continue;
-                    else is_fit = true;
+                    else {
+                        is_fit = true;
+                        break;
+                    }
                 }
                 if (is_fit) {
                     region::dealloc_node_tree(file, before_node_offset);
@@ -391,7 +400,12 @@ public:
         }
     };
 
-
+    void end_of_file() const {
+        if (current_pointer >= (long) FILE_SIZE) {
+            cout << "EOF" << endl;
+            ::exit(1);
+        }
+    }
 
 };
 

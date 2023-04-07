@@ -16,17 +16,123 @@ TODO:
 
 #### Примеры выполнения запросов.
 - `/foo[@a=1]`
+  ```
+       descendant:
+         ---> shema name: foo
+        filter = select property:
+         --> property name a
+        operator:
+        equal to
+        value = 1
+    ```
 - `/foo[1][@a=1]`
+  ```
+   descendant:
+    ---> shema name: foo
+    filter = select:
+    --> element number: 1
+    filter = select property:
+    --> property name a
+    operator:
+    equal to
+    value = 1
+    ````
 - `/foo[child][@a=1]`
+- ```
+   descendant: 
+    ---> shema name: foo
+    filter = select:
+    --> descendant schema name: child
+    filter = select property:
+    --> property name a
+    operator:
+    equal to
+    value = 1
+  ```
 - `/foo[@a=1][@b=2]`
-- `/foo/@a`
-- `foo`
+  ```
+      -descendant:
+           ---> shema name: foo
+      filter = select property:
+      --> property name a
+      operator:
+      equal to
+      value = 1
 
-- `update(/foo[1][@a=1])` -- меняет 1-му элементу схемы foo значение атрибута a=1
-- `remove(/foo[1][@a=1])` -- удалить 1-й элемент схемы foo со значение атрибута a=1
-- `remove_scheme(foo)` -- удалить схему foo (то есть коллекцию foo)
-- `remove_element(/foo[@a=1])` -- удалить из элементов схемы foo те, у которых значени атрибута(свойства) a=1
+      filter = select property:
+      --> property name b
+      operator:
+      equal to
+      value = 2
+    ````
+  - `/foo/@a`
+    ```
+     descendant:
+         ---> shema name: foo
 
-- `create_scheme(foo[@attrname;type=int32][@attr;type=string])` -- создать коллекцию foo с заданными атрибутами и их типами
-- `сreate_element(/foo/zoo[@a=amonguus])` -- создать ноду zoo с заданными значениями атрибутов с родителем foo (указание нод родителя -- опционально. Важно: запрос подразумевает создание атрибутов только у крайней правой ноды.
-- `*` -- выборка всей базы данных
+        --> node property: a
+    ````
+  - `foo`
+    ```
+      --> schema name: foo
+    ```
+
+    - `update(/foo[1][@a=1])` -- меняет 1-му элементу схемы foo значение атрибута a=1
+      ```
+        descendant:
+             ---> shema name: foo
+        filter = select:
+        --> element number: 1
+        filter = select property:
+        --> property name a
+        operator:
+        equal to
+        value = 1
+
+        OPERATION: update
+        ```
+    - `remove_scheme(foo)` -- удалить схему foo (то есть коллекцию foo)
+      ```
+         --> schema name: foo
+        OPERATION: remove_scheme
+        ```
+    - `remove_element(/foo[@a=1])` -- удалить из элементов схемы foo те, у которых значени атрибута(свойства) a=1
+      ```
+        descendant:
+             ---> shema name: foo
+        filter = select property:
+        --> property name a
+        operator:
+        equal to
+        value = 1
+
+        OPERATION: remove_element
+        ```
+    - `create_scheme(foo[@attrname;type=int32][@attr;type=string])` -- создать коллекцию foo с заданными атрибутами и их типами
+      ```
+         --> schema name: foo
+        property name: attrname
+        property type:
+        int32
+        property name: attr
+        property type:
+        string
+        OPERATION: create_scheme
+        ```
+    - `create_scheme(foo[@attrname;type=int32][@attr;type=string])` -- создать коллекцию foo с заданными атрибутами и их типами
+      ```
+         descendant:
+         ---> shema name: foo
+         descendant:
+         ---> shema name: zoo
+         filter = select property:
+         --> property name a
+         operator:
+         equal to
+           value = 1
+
+         OPERATION: create_element
+        ```
+    - `*` -- выборка всей базы данных
+    
+      ``select all``
