@@ -9,14 +9,10 @@ void yyerror(const char * message);
 %union
 {
     int number;
-    int op;
-    int type;
     int bool_value;
     double double_num;
 
     char* str;
-    char* node_name;
-    char* attribute_name;
 
     struct Filter_obj* filt_obj;
     struct element* el;
@@ -28,20 +24,21 @@ void yyerror(const char * message);
 %token <bool_value> BOOL
 
 /* symbols */
-%token SLASH START_FILTER END_FILTER OPEN_BRACKET CLOSE_BRACKET COMMA IS_ATTRIBUTE ASTERISK
+%token SLASH START_FILTER END_FILTER OPEN_BRACKET CLOSE_BRACKET SEMICOLON IS_ATTRIBUTE
 
 /* filter tokens */
-%token <op> EQUAL NOT_EQUAL LESS MORE
-%token <type> INT32_TYPE DOUBLE_TYPE STRING_TYPE BOOLEAN_TYPE
+%token <number> EQUAL NOT_EQUAL LESS MORE
+%token <number> INT32_TYPE DOUBLE_TYPE STRING_TYPE BOOLEAN_TYPE
 
 /* functions */
-%token UPDATE REMOVE CREATE_EL CREATE_SCH
+%token <str> UPDATE REMOVE_EL REMOVE_SCH CREATE_EL CREATE_SCH ASTERISK
 
 %type <str> attribute
 %type <str> node
+%type <str> function
 
-%type <op> operator
-%type <type> val_type
+%type <number> operator
+%type <number> val_type
 %type <el> node_value
 
 %type <filt_obj> filter_object
@@ -53,13 +50,21 @@ query:
         |
         query node filters
         |
-        query node |
+        query node
+        |
         func ;
 func:
      query function OPEN_BRACKET query CLOSE_BRACKET
         {
-                printf("\tfunction!\n");
-        } ;
+                printf("OPERATION: %s\n", $2);
+        }
+     |
+     query ASTERISK
+     {
+            printf("%s", $2);
+            print_newline();
+     }
+     ;
 
 filters:
         filter | filters filter
@@ -84,14 +89,17 @@ filter_object:
             {
                 $$ = create_filter_obj($2, $1, $3);
             }
+            |
+            attribute SEMICOLON val_type
+            {
+                $$ = create_property_scheme_filter_obj($1, $3);
+            }
             ;
 node:
          separator WORD
          {
-            print_tab();
             printf("descendant: ");
             print_newline();
-            print_tab();
             print_tab();
             printf(" ---> shema name: %s", $2);
             print_newline();
@@ -99,15 +107,13 @@ node:
          |
          WORD
          {
-            printf("select all elements: ");
-            print_newline();
-            print_tab();
             printf(" --> schema name: %s", $1);
             print_newline();
          }
          |
          separator IS_ATTRIBUTE WORD
          {
+            print_newline();
             print_tab();
             printf("--> node property: %s", $3);
             print_newline();
@@ -139,11 +145,13 @@ node_value:
      ;
 
 function:
-    UPDATE | REMOVE | CREATE_EL | CREATE_SCH ;
+    UPDATE | REMOVE_EL | REMOVE_SCH | CREATE_EL | CREATE_SCH ;
 
 operator:
     EQUAL | NOT_EQUAL | LESS | MORE ;
 
+val_type:
+    INT32_TYPE | DOUBLE_TYPE | STRING_TYPE | BOOLEAN_TYPE ;
 
 attribute:
     IS_ATTRIBUTE WORD

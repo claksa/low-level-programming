@@ -17,11 +17,23 @@ struct element {
     int element_type;
 };
 
-struct Filter_obj {
+struct filter_scheme {
     int operator_val;
     bool is_single_val;
     struct element* val;
     char attribute[30]; /*optional*/
+};
+
+struct property_scheme {
+    int node_type;
+    char property_name[30];
+};
+
+struct Filter_obj {
+    union {
+        struct filter_scheme* filter;
+        struct property_scheme* prop;
+    };
     struct Filter_obj* next;
 };
 
@@ -33,6 +45,7 @@ struct property {
 
 struct Filter_obj* create_filter_obj(int op, char* attribute, struct element* el);
 struct Filter_obj* create_single_filter_obj(struct element* el);
+struct Filter_obj* create_property_scheme_filter_obj(char* prop_name, int type);
 
 void print_newline();
 void print_tab();

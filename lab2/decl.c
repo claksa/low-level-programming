@@ -11,7 +11,7 @@ void print_el_for_single_filter(struct element* el) {
     print_newline();
     print_tab();
     if (el->element_type == 0) {
-        printf(" --> descendant number: %d", el->num);
+        printf(" --> element number: %d", el->num);
     }
     if (el->element_type == 2) {
         printf(" --> descendant schema name: %s", el->string_val);
@@ -20,8 +20,8 @@ void print_el_for_single_filter(struct element* el) {
 }
 
 void print_filters(struct Filter_obj* filter) {
-        if (filter->is_single_val) {
-            print_el_for_single_filter(filter->val);
+        if (filter->filter->is_single_val) {
+            print_el_for_single_filter(filter->filter->val);
         } else {
             print_filter_obj(filter);
         }
@@ -29,28 +29,72 @@ void print_filters(struct Filter_obj* filter) {
 
 struct Filter_obj* create_single_filter_obj(struct element* el) {
     struct Filter_obj * obj = (struct Filter_obj*) malloc(sizeof(struct Filter_obj*));
+    struct filter_scheme * f_sch = (struct filter_scheme*) malloc(sizeof(struct filter_scheme*));
+    obj->filter = f_sch;
     if (obj == NULL) {
         fprintf(stderr, "error allocate filter_obj");
         print_newline();
         return NULL;
     }
-    obj->is_single_val = true;
-    obj->val = el;
-    print_el_for_single_filter(obj->val);
+    obj->filter->is_single_val = true;
+    obj->filter->val = el;
+    print_el_for_single_filter(obj->filter->val);
+    return obj;
+}
+
+void print_property(struct  property_scheme* prop) {
+    printf("property name: %s", prop->property_name);
+    print_newline();
+    printf("property type: ");
+    print_newline();
+    switch(prop->node_type) {
+        case 0:
+            printf("int32");
+            break;
+        case 1:
+            printf("double");
+            break;
+        case 2:
+            printf("string");
+            break;
+        case 3:
+            printf("bool");
+            break;
+        default:
+            printf("no such type");
+            return;
+    }
+    print_newline();
+}
+
+struct Filter_obj* create_property_scheme_filter_obj(char* prop_name, int type) {
+    struct Filter_obj * obj = (struct Filter_obj*) malloc(sizeof(struct Filter_obj*));
+    struct property_scheme * prop = (struct property_scheme*) malloc(sizeof(struct property_scheme*));
+    prop->node_type = type;
+    strcpy(prop->property_name, prop_name);
+    obj->prop = prop;
+    if (obj == NULL) {
+        fprintf(stderr, "error allocate filter_obj");
+        print_newline();
+        return NULL;
+    }
+    print_property(prop);
     return obj;
 }
 
 struct Filter_obj* create_filter_obj(int op, char* attribute, struct element* el) {
     struct Filter_obj * obj = (struct Filter_obj*) malloc(sizeof(struct Filter_obj*));
+    struct filter_scheme * f_sch = (struct filter_scheme*) malloc(sizeof(struct filter_scheme*));
+    obj->filter = f_sch;
     if (obj == NULL) {
         fprintf(stderr, "error allocate filter_obj");
         print_newline();
         return NULL;
     }
-    obj->is_single_val = false;
-    obj->val = el;
-    obj->operator_val = op;
-    strcpy(obj->attribute, attribute);
+    obj->filter->is_single_val = false;
+    obj->filter->val = el;
+    obj->filter->operator_val = op;
+    strcpy(obj->filter->attribute, attribute);
     print_filter_obj(obj);
     return obj;
 }
@@ -110,11 +154,12 @@ void print_operator(int operator_value) {
 void print_filter_obj(struct Filter_obj* obj) {
     printf("filter = select property:");
     print_newline();
-    printf(" --> property name %s", obj->attribute);
+    print_tab();
+    printf(" --> property name %s", obj->filter->attribute);
     print_newline();
-    print_operator(obj->operator_val);
+    print_operator(obj->filter->operator_val);
     print_newline();
-    print_element(obj->val);
+    print_element(obj->filter->val);
     print_newline();
 }
 
