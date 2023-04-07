@@ -46,6 +46,7 @@ struct property {
 struct Filter_obj* create_filter_obj(int op, char* attribute, struct element* el);
 struct Filter_obj* create_single_filter_obj(struct element* el);
 struct Filter_obj* create_property_scheme_filter_obj(char* prop_name, int type);
+void free_filter(struct Filter_obj* filter);
 
 void print_newline();
 void print_tab();

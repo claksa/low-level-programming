@@ -99,6 +99,16 @@ struct Filter_obj* create_filter_obj(int op, char* attribute, struct element* el
     return obj;
 }
 
+void free_filter(struct Filter_obj* filter) {
+    if (filter->filter!=NULL) {
+        free(filter->filter);
+    }
+    if (filter->prop!=NULL) {
+        free(filter->prop);
+    }
+    free(filter);
+}
+
 void print_newline() {
     printf("\n");
 }
