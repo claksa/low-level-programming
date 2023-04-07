@@ -7,12 +7,12 @@
 
 #define FILE_SIZE 10737418240
 
-#define DATABASE "database.dat"
+#define DATABASE R"(C:\Users\DELL\fall3_labs\low-level-programming\lab1\aa.dat)"
 #define DEFAULT_COL_NUM 100
 #define DEFAULT_DOCS_NUM 1000
-#define DB_OFFSET sizeof(database_info)
+#define DB_OFFSET 0
 #define NODE_SIZE sizeof(doc_tree_info)
-#define COLLECTION_HEADER_SIZE sizeof(collection)
+#define COLLECTION_HEADER_SIZE sizeof(collection_meta_info)+sizeof(scheme)
 
 #define NODE_CONTENT_SIZE sizeof(property)
 #define NODE_INFO_SIZE NODE_CONTENT_SIZE*DEFAULT_DOCS_NUM

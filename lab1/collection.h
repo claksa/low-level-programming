@@ -10,36 +10,33 @@ using namespace std;
 
 class collection_meta_info {
 public:
-    long start_documents;
-    long end_documents; // also start of tree model records
-    long end_tree_model_recs;
+    //long start_documents;
+    //long end_documents; // also start of tree model records
+    //long end_tree_model_recs;
     bool is_empty;
     long collection_id;
     long offset_from_beg;
     static inline long current_id;
 
-    long end_of_last_property;
-    long end_of_last_node;
+//    long end_of_last_property;
+//    long end_of_last_node;
 
     collection_meta_info() = default;
 
-    collection_meta_info(long offsetFromBeg, long start_docs, long end_docs, long end_coll) :
+    collection_meta_info(long offsetFromBeg) :
             collection_id(current_id++),
             offset_from_beg(offsetFromBeg),
-            start_documents(start_docs),
-            end_documents(end_docs),
-            end_tree_model_recs(end_coll),
-            is_empty(true),
-            end_of_last_property(start_docs),
-            end_of_last_node(end_docs)
+//            start_documents(start_docs),
+//            end_documents(end_docs),
+//            end_tree_model_recs(end_coll),
+            is_empty(true)
+//            end_of_last_property(start_docs),
+//            end_of_last_node(end_docs)
     {}
 
     friend ostream& operator<<(ostream& os, const collection_meta_info& meta_inf) {
         cout << "collection_id: " << meta_inf.collection_id << endl;
         cout << "offset_from_beg: " << meta_inf.offset_from_beg << endl;
-        cout << "start_documents: " << meta_inf.start_documents << endl;
-        cout << "end_documents: " << meta_inf.end_documents << endl;
-        cout << "end_tree_model_res: " << meta_inf.end_tree_model_recs << endl;
         cout << "empty collection: " << meta_inf.is_empty << endl;
         return os;
     }
@@ -85,9 +82,9 @@ public:
     }
 
     friend ostream& operator<<(ostream& os, const collection& meta_inf) {
-        cout << meta_inf.header << endl;
+        cout << meta_inf.header;
         cout << "--collection scheme--" << endl;
-        cout << meta_inf.sch;
+        cout << meta_inf.sch << endl;
         return os;
     }
 
@@ -96,17 +93,19 @@ public:
     }
 
     long insert_node(fstream& file, doc_tree_info& node) {
-        long node_tree_start = header.end_of_last_node;
-        node.add_node(file, node_tree_start);
+        node.add_node(file);
         return (long) file.tellp();
     }
 
     //!!!NOT TREE TRAVERSION
     void read_node_tree(fstream& file) const {
         cout << "READ NODE_TREE: " << endl;
-        long offset = header.end_documents; // and start node tree info
+        //TODO set offset
+        long offset; // and start node tree info
         file.seekp(offset, ios_base::beg);
-        while ((long)file.tellp() != header.end_of_last_node)  {
+        // TODO refactor
+        long end_of_last_node;
+        while ((long)file.tellp() != end_of_last_node)  {
             auto* node = new doc_tree_info();
             node->read_node(file, offset);
             cout << *node;
@@ -127,9 +126,12 @@ public:
 
     void enumerate_by_filter(fstream& file, filter& filter) const {
         node_type value = filter.value;
-        long offset = header.end_documents; // and start node tree info
+        //long offset = header.end_documents; // and start node tree info
+        //TODO set offset end_of_last_node
+        long offset;
+        long end_of_last_node;
         file.seekp(offset, ios_base::beg);
-        while ((long)file.tellp() != header.end_of_last_node)  {
+        while ((long)file.tellp() != end_of_last_node)  {
             auto* node = new doc_tree_info();
             node->read_node(file, offset);
             cout << *node;

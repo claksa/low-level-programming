@@ -6,6 +6,16 @@
 #include <string>
 #include <variant>
 
+enum region_type {
+    COLLECTION,
+    NODE
+};
+
+struct region_header {
+    region_type type;
+    bool is_removed;
+};
+
 enum DataTypes {INT32_T, FLOAT_T, STRING_T, BOOL_T};
 
 static std::unordered_map<DataTypes, std::string> const ent_str = {

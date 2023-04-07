@@ -3,4 +3,4 @@ project(llp)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(lab1 document.h scheme.h main.cpp type.h type.cpp database.h region.h collection.h query.h)
+add_executable(lab1 document.h scheme.h main.cpp type.h type.cpp database.h region.h collection.h query.h tests.h)

@@ -13,6 +13,7 @@ class doc_tree_info {
     int parent_id;
     static inline int id;
 public:
+    int collection_id;
     int children_n;
     int real_properties_size;
     long* children{};
@@ -28,11 +29,11 @@ public:
     real_properties_size(0)
     {}
 
-    doc_tree_info(int parent_id, string name, long start_prop, int children_n, int p_num) :
+    doc_tree_info(int col_id, int parent_id, string name, int children_n, int p_num) :
+    collection_id(col_id),
     node_id(id++),
     parent_id(parent_id),
     node_name(std::move(name)),
-    start_content_offset(start_prop),
     children_n(children_n),
     children(new long[children_n]),
     real_properties_size(p_num)
@@ -43,8 +44,8 @@ public:
         return out;
     }
 
-    void add_node(fstream& filestream, long offset) {
-        filestream.seekp(offset, ios_base::beg);
+    void add_node(fstream& filestream) {
+//        filestream.seekp(offset, ios_base::beg);
         write(filestream, *this);
     }
 
@@ -54,7 +55,7 @@ public:
     }
 
     void read_node(fstream& filestream, long offset) {
-//        filestream.seekg(offset, ios_base::beg);
+        filestream.seekg(offset, ios_base::beg);
         read(filestream, *this);
     }
 
