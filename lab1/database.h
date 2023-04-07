@@ -166,9 +166,8 @@ public:
             region_header header;
             read_region_header(file, header, pointer);
             if (header.type == COLLECTION) {
-                long off = (long) file.tellp();
-                pointer = off+ (long) COLLECTION_HEADER_SIZE;
-                file.seekp(off+ (long) COLLECTION_HEADER_SIZE, ios_base::beg);
+                file.seekp(COLLECTION_HEADER_SIZE, ios_base::cur);
+                pointer = (long) file.tellp();
             }
             if (header.type == NODE) {
                 cout << "node doc tree: " << endl;
@@ -202,9 +201,8 @@ public:
             region_header header;
             read_region_header(file, header, pointer);
             if (header.type == COLLECTION) {
-                long off = (long) file.tellp();
-                pointer = off+ (long) COLLECTION_HEADER_SIZE;
-                file.seekp(off+ (long) COLLECTION_HEADER_SIZE, ios_base::beg);
+                file.seekp(COLLECTION_HEADER_SIZE, ios_base::cur);
+                pointer = (long) file.tellp();
             }
             if (header.type == NODE) {
                 auto* node = new doc_tree_info();
@@ -245,9 +243,8 @@ public:
             region_header header;
             read_region_header(file, header, pointer);
             if (header.type == COLLECTION) {
-                long off = (long) file.tellp();
-                pointer = off+ (long) COLLECTION_HEADER_SIZE;
-                file.seekp(off+ (long) COLLECTION_HEADER_SIZE, ios_base::beg);
+                file.seekp(COLLECTION_HEADER_SIZE, ios_base::cur);
+                pointer = (long) file.tellp();
             }
             if (header.type == NODE) {
                 auto* node = new doc_tree_info();
@@ -310,9 +307,8 @@ public:
             region_header header;
             read_region_header(file, header, pointer);
             if (header.type == COLLECTION) {
-                long off = (long) file.tellp();
-                pointer = off+ (long) COLLECTION_HEADER_SIZE;
-                file.seekp(off+ (long) COLLECTION_HEADER_SIZE, ios_base::beg);
+                file.seekp(COLLECTION_HEADER_SIZE, ios_base::cur);
+                pointer = (long) file.tellp();
             }
             if (header.type == NODE) {
                 auto* node = new doc_tree_info();
@@ -342,6 +338,58 @@ public:
             }
         }
     }
+
+    //2nd param filter for property
+    void remove_node_by_filter(fstream& file, filter_query& query) {
+        auto* col = new collection();
+        col->header.collection_id = query.collection_id;
+        cout << "IN READ operation: " << endl;
+        read_collection_header(file, *col);
+        if (col->header.is_empty) {
+            cout << "no nodes to enumerate " << endl;
+        }
+        cout << "IN READ COLLECTION: " << endl;
+        file.seekp(ios_base::beg);
+        long pointer = (long) file.tellp();
+        while(pointer != current_pointer) {
+            region_header header;
+            read_region_header(file, header, pointer);
+            if (header.type == COLLECTION) {
+                file.seekp(COLLECTION_HEADER_SIZE, ios_base::cur);
+                pointer = (long) file.tellp();
+            }
+            if (header.type == NODE) {
+                long before_node_offset = (long) file.tellp();
+                auto* node = new doc_tree_info();
+                node->read_node(file, (long)file.tellg());
+                if (node->collection_id != query.collection_id) {
+                    long properties_size = (long) (node->real_properties_size* sizeof(property));
+                    file.seekp(properties_size, ios_base::cur);
+                    pointer = (long) file.tellp();
+                    continue;
+                }
+                long start_property = (long) file.tellg();
+                bool is_fit = false;
+                for (int i = 0; i < node->real_properties_size; i++) {
+                    auto* p = new property();
+                    p->read_property(file,(long) (start_property + i*sizeof(property)));
+                    if (p->property_name != query.filter.property_name) {
+                        continue;
+                    }
+                    if (p->val != query.filter.value) continue;
+                    else is_fit = true;
+                }
+                if (is_fit) {
+                    region::dealloc_node_tree(file, before_node_offset);
+                    for (int i = 0; i < node->real_properties_size; i++) {
+                        region::dealloc_node_content(file, (long) (start_property + i*sizeof(property)));
+                    }
+                }
+                pointer = (long) file.tellp();
+                cout << endl;
+            }
+        }
+    };
 
 
 
