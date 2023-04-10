@@ -34,7 +34,7 @@ struct filter {
 //    string node_name;
     string property_name;
     node_type value; // can be new value if it is update op
-    FILTER filter_operator;
+    FILTER filter_operator; //optional
 };
 
 struct filter_query {
